@@ -1,9 +1,9 @@
 import { createBrowserRouter } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import SchoolDashboard from "./pages/SchoolDashboard";
-import SupplierDashboard from "./pages/SupplierDashboard";
-import AdminDashboard from "./pages/AdminDashboard";
+// import SchoolDashboard from "./pages/SchoolDashboard";
+// import SupplierDashboard from "./pages/SupplierDashboard";
+// import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RoleBasedDashboardRedirect from "./components/RoleBasedDashboardRedirect";
 

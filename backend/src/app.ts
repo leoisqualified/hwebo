@@ -21,10 +21,10 @@ app.use(
 app.use(json());
 
 // Routes
-app.use("/health", healthRoutes);
-app.use("/auth", authRoutes);
-app.use("/supplier", supplierRoutes);
-app.use("/admin", adminRoutes);
+app.use("/api/health", healthRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/supplier", supplierRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Global error handler
 app.use(errorHandler);
