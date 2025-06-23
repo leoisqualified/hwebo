@@ -13,7 +13,7 @@ export const submitOffer = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { bidItemId, pricePerUnit, notes } = req.body;
 
@@ -21,9 +21,7 @@ export const submitOffer = async (
     const user = await userRepo.findOneByOrFail({ id: userId });
 
     if (user.role !== "supplier") {
-      return res
-        .status(403)
-        .json({ error: "Only suppliers can submit offers." });
+      res.status(403).json({ error: "Only suppliers can submit offers." });
     }
 
     const bidItem = await bidItemRepo.findOneByOrFail({ id: bidItemId });
@@ -67,7 +65,7 @@ export const selectWinningOffer = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { offerId } = req.params;
     const userId = (req as any).user.userId;
@@ -77,18 +75,19 @@ export const selectWinningOffer = async (
       relations: ["bidItem", "bidItem.bidRequest", "bidItem.bidRequest.school"],
     });
 
-    if (!offer) return res.status(404).json({ message: "Offer not found." });
+    if (!offer) {
+      res.status(404).json({ message: "Offer not found." });
+      return;
+    }
 
     // Make sure the school owns this bid request
     if (offer.bidItem.bidRequest.school.id !== userId) {
-      return res.status(403).json({ message: "Unauthorized" });
+      res.status(403).json({ message: "Unauthorized" });
     }
 
     // Check if the deadline has passed
     if (new Date() < offer.bidItem.bidRequest.deadline) {
-      return res
-        .status(400)
-        .json({ message: "Cannot select offer before deadline." });
+      res.status(400).json({ message: "Cannot select offer before deadline." });
     }
 
     // Reject all other offers for this item

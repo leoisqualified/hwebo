@@ -7,6 +7,7 @@ interface User {
   id: string;
   email: string;
   role: "admin" | "school" | "supplier";
+  verified: boolean
 }
 
 interface AuthContextType {

@@ -12,13 +12,14 @@ export const register = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { email, password, role } = req.body;
 
     const existingUser = await userRepository.findOneBy({ email });
     if (existingUser) {
-      return res.status(400).json({ error: "Email already registered" });
+      res.status(400).json({ error: "Email already registered" });
+      return;
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -27,12 +28,10 @@ export const register = async (
       email,
       password: hashedPassword,
       role,
-      verified: false, // Initially not verified
+      verified: false,
     });
 
     await userRepository.save(user);
-
-    // TODO: Send verification email or notify admin for approval
 
     res.status(201).json({ message: "User registered. Await verification." });
   } catch (error) {
@@ -44,22 +43,25 @@ export const login = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { email, password } = req.body;
 
     const user = await userRepository.findOneBy({ email });
     if (!user) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      res.status(400).json({ error: "Invalid credentials" });
+      return;
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      res.status(400).json({ error: "Invalid credentials" });
+      return;
     }
 
     if (!user.verified) {
-      return res.status(403).json({ error: "Account not verified yet" });
+      res.status(403).json({ error: "Account not verified yet" });
+      return;
     }
 
     const token = jwt.sign(

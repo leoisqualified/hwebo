@@ -13,7 +13,7 @@ export const createBidRequest = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { title, description, deadline, items } = req.body;
 
@@ -21,9 +21,7 @@ export const createBidRequest = async (
     const user = await userRepo.findOneByOrFail({ id: userId });
 
     if (user.role !== "school") {
-      return res
-        .status(403)
-        .json({ error: "Only schools can create bid requests." });
+      res.status(403).json({ error: "Only schools can create bid requests." });
     }
 
     const bidItems = items.map((item: any) => {
@@ -43,7 +41,7 @@ export const createBidRequest = async (
     });
 
     await bidRequestRepo.save(bidRequest);
-    return res
+    res
       .status(201)
       .json({ message: "Bid request created successfully.", bidRequest });
   } catch (error) {
@@ -55,7 +53,7 @@ export const getActiveBidRequests = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const now = new Date();
     const activeBids = await bidRequestRepo.find({
@@ -74,7 +72,7 @@ export const getBidRequestById = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -84,7 +82,7 @@ export const getBidRequestById = async (
     });
 
     if (!bidRequest) {
-      return res.status(404).json({ error: "Bid request not found." });
+      res.status(404).json({ error: "Bid request not found." });
     }
 
     res.json({ bidRequest });

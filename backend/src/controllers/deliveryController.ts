@@ -56,25 +56,21 @@ export const confirmDelivery = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { deliveryId } = req.body;
 
     const delivery = await deliveryRepo.findOneByOrFail({ id: deliveryId });
     if (delivery.status !== "delivered")
-      return res
-        .status(400)
-        .json({
-          message: "Delivery is not yet marked as completed by supplier.",
-        });
+      res.status(400).json({
+        message: "Delivery is not yet marked as completed by supplier.",
+      });
 
     // Delivery is accepted → payment can now be initiated
-    res
-      .status(200)
-      .json({
-        message: "Delivery confirmed by school. Proceed to payment.",
-        delivery,
-      });
+    res.status(200).json({
+      message: "Delivery confirmed by school. Proceed to payment.",
+      delivery,
+    });
   } catch (error) {
     next(error);
   }

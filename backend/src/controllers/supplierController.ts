@@ -11,7 +11,7 @@ export const submitSupplierProfile = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const {
       businessName,
@@ -26,14 +26,15 @@ export const submitSupplierProfile = async (
     const userId = (req as any).user.userId;
     const user = await userRepo.findOneByOrFail({ id: userId });
 
-    if (user.role !== "supplier")
-      return res.status(403).json({ error: "Unauthorized" });
+    if (user.role !== "supplier") {
+      res.status(403).json({ error: "Unauthorized" });
+      return;
+    }
 
     const existing = await profileRepo.findOne({
       where: { user: { id: user.id } },
     });
-    if (existing)
-      return res.status(400).json({ error: "Profile already submitted" });
+    if (existing) res.status(400).json({ error: "Profile already submitted" });
 
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
@@ -42,7 +43,7 @@ export const submitSupplierProfile = async (
     const ownerIdFile = files["ownerId"]?.[0];
 
     if (!fdaLicenseFile || !registrationCertFile || !ownerIdFile) {
-      return res.status(400).json({ message: "Missing required files" });
+      res.status(400).json({ message: "Missing required files" });
     }
 
     const profile = profileRepo.create({

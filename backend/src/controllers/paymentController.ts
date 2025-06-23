@@ -13,7 +13,7 @@ export const initiatePayment = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { deliveryId, paymentMethod } = req.body;
     const userId = (req as any).user.userId;
@@ -23,14 +23,17 @@ export const initiatePayment = async (
       relations: ["offer", "offer.bidItem"],
     });
 
-    if (!delivery)
-      return res.status(404).json({ message: "Delivery not found." });
-    if (delivery.status !== "delivered")
-      return res
-        .status(400)
-        .json({
-          message: "Payment cannot be made until delivery is confirmed.",
-        });
+    if (!delivery) {
+      res.status(404).json({ message: "Delivery not found." });
+      return;
+    }
+
+    if (delivery.status !== "delivered") {
+      res.status(400).json({
+        message: "Payment cannot be made until delivery is confirmed.",
+      });
+      return;
+    }
 
     const offer = delivery.offer;
 

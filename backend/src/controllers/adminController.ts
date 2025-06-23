@@ -24,14 +24,18 @@ export const getSupplierProfile = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const profile = await profileRepo.findOne({
       relations: ["user"],
       where: { id },
     });
-    if (!profile) return res.status(404).json({ error: "Profile not found" });
+    if (!profile) {
+      res.status(404).json({ error: "Profile not found" });
+      return;
+    }
+
     res.json(profile);
   } catch (error) {
     next(error);
@@ -42,14 +46,17 @@ export const verifySupplier = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const profile = await profileRepo.findOne({
       relations: ["user"],
       where: { id },
     });
-    if (!profile) return res.status(404).json({ error: "Profile not found" });
+    if (!profile) {
+      res.status(404).json({ error: "Profile not found" });
+      return;
+    }
 
     profile.user.verified = true;
     await userRepo.save(profile.user);
@@ -64,14 +71,17 @@ export const rejectSupplier = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const profile = await profileRepo.findOne({
       relations: ["user"],
       where: { id },
     });
-    if (!profile) return res.status(404).json({ error: "Profile not found" });
+    if (!profile) {
+      res.status(404).json({ error: "Profile not found" });
+      return;
+    }
 
     await profileRepo.remove(profile);
     await userRepo.remove(profile.user); // Optional: remove the user entirely

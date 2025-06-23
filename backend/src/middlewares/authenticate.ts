@@ -1,4 +1,3 @@
-// middlewares/authenticate.ts
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { env } from "../config/index";
@@ -13,11 +12,12 @@ export const authenticate = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): void => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Unauthorized. No token provided." });
+    res.status(401).json({ error: "Unauthorized. No token provided." });
+    return;
   }
 
   const token = authHeader.split(" ")[1];
@@ -33,6 +33,7 @@ export const authenticate = (
 
     next();
   } catch (error) {
-    return res.status(401).json({ error: "Invalid or expired token." });
+    res.status(401).json({ error: "Invalid or expired token." });
+    return;
   }
 };
