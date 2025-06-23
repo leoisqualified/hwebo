@@ -5,7 +5,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from "typeorm";
+import { BidRequest } from "./BidRequest";
 
 @Entity()
 export class User {
@@ -29,4 +31,7 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @OneToMany(() => BidRequest, (bid) => bid.school)
+  bidRequests!: BidRequest[];
 }
