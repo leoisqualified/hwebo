@@ -5,18 +5,27 @@ import type { ReactNode } from "react";
 interface ProtectedRouteProps {
   children: ReactNode;
   roles?: string[]; // Optional: restrict by role
+  requireVerification?: boolean;
 }
 
 export default function ProtectedRoute({
   children,
   roles,
+  requireVerification = false,
 }: ProtectedRouteProps) {
-  const { token, role } = useAuth();
+  const { user, loading } = useAuth();
 
-  if (!token) return <Navigate to="/login" replace />;
+  if (loading) return <div className="text-center mt-10">Loading...</div>;
 
-  if (roles && (!role || !roles.includes(role)))
+  if (!user) return <Navigate to="/login" replace />;
+
+  if (roles && !roles.includes(user.role))
     return <Navigate to="/unauthorized" replace />;
+
+  // Handle verification logic
+  if (requireVerification && user.role === "supplier" && !user.verified) {
+    return <Navigate to="/supplier/kyc" replace />;
+  }
 
   return children;
 }

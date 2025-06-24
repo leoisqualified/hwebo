@@ -90,3 +90,23 @@ export const getBidRequestById = async (
     next(error);
   }
 };
+
+export const getMyBids = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const userId = (req as any).user.userId;
+
+    const myBids = await bidRequestRepo.find({
+      where: { school: { id: userId } },
+      relations: ["items", "school"],
+      order: { createdAt: "DESC" },
+    });
+
+    res.json({ myBids });
+  } catch (error) {
+    next(error);
+  }
+};

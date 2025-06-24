@@ -7,7 +7,7 @@ interface User {
   id: string;
   email: string;
   role: "admin" | "school" | "supplier";
-  verified: boolean
+  verified: boolean;
 }
 
 interface AuthContextType {
@@ -17,6 +17,7 @@ interface AuthContextType {
   loading: boolean;
   login: (token: string) => void;
   logout: () => void;
+  fetchUser: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -66,13 +67,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("role");
-  delete api.defaults.headers.common["Authorization"];
-  setUser(null);
-  setToken(null);
-  setRole(null);
-};
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    delete api.defaults.headers.common["Authorization"];
+    setUser(null);
+    setToken(null);
+    setRole(null);
+  };
 
   const [token, setToken] = useState<string | null>(
     localStorage.getItem("token")
@@ -80,7 +81,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [role, setRole] = useState<string | null>(localStorage.getItem("role"));
 
   return (
-    <AuthContext.Provider value={{ user, token, role, loading, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, token, role, loading, login, logout, fetchUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

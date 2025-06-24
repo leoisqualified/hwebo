@@ -4,6 +4,7 @@ import {
   createBidRequest,
   getActiveBidRequests,
   getBidRequestById,
+  getMyBids,
 } from "../controllers/bidRequestController";
 import { authenticate } from "../middlewares/authenticate";
 import { validateRequest } from "../middlewares/validateRequest";
@@ -19,5 +20,6 @@ router.post(
 );
 router.get("/active", authenticate, getActiveBidRequests);
 router.get("/:id", authenticate, getBidRequestById);
+router.get("/my-bids", authenticate, getMyBids);
 
 export default router;

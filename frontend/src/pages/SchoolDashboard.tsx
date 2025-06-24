@@ -1,27 +1,57 @@
+// src/pages/SchoolDashboard.tsx
+import { Link, Outlet, useLocation } from "react-router-dom";
+
+function navLinkClass(location: any, path: string) {
+  return location.pathname === path
+    ? "bg-blue-800 p-2 rounded"
+    : "hover:bg-blue-600 p-2 rounded";
+}
+
 export default function SchoolDashboard() {
+  const location = useLocation();
+
   return (
     <div className="flex min-h-screen">
-      <aside className="w-64 bg-blue-800 text-white p-5">
-        <h2 className="text-xl font-bold mb-6">School Panel</h2>
+      {/* Sidebar */}
+      <aside className="w-64 bg-blue-700 text-white p-5">
+        <h2 className="text-xl font-bold mb-6">School Dashboard</h2>
         <nav className="flex flex-col space-y-4">
-          <a href="#" className="hover:bg-blue-700 p-2 rounded">
-            Post Bid Requests
-          </a>
-          <a href="#" className="hover:bg-blue-700 p-2 rounded">
-            View Supplier Offers
-          </a>
-          <a href="#" className="hover:bg-blue-700 p-2 rounded">
-            Select Winners
-          </a>
-          <a href="#" className="hover:bg-blue-700 p-2 rounded">
-            Payments
-          </a>
+          <Link
+            to="/school-dashboard/available-bids"
+            className={navLinkClass(
+              location,
+              "/school-dashboard/available-bids"
+            )}
+          >
+            Available Bids
+          </Link>
+          <Link
+            to="/school-dashboard/post-bid"
+            className={navLinkClass(location, "/school-dashboard/post-bid")}
+          >
+            Post New Bid
+          </Link>
+          <Link
+            to="/school-dashboard/my-bids"
+            className={navLinkClass(location, "/school-dashboard/my-bids")}
+          >
+            My Active Bids
+          </Link>
+          <Link
+            to="/school-dashboard/payment-status"
+            className={navLinkClass(
+              location,
+              "/school-dashboard/payment-status"
+            )}
+          >
+            Payment Status
+          </Link>
         </nav>
       </aside>
 
+      {/* Main Content */}
       <main className="flex-1 p-8 bg-blue-50">
-        <h1 className="text-2xl font-semibold mb-4">Welcome, School!</h1>
-        {/* School content */}
+        <Outlet />
       </main>
     </div>
   );

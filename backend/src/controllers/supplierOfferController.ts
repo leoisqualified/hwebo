@@ -110,3 +110,29 @@ export const selectWinningOffer = async (
     next(error);
   }
 };
+
+// Get all awarded offers for the logged-in school
+export const getSchoolPayments = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = (req as any).user.userId;
+
+    const awardedOffers = await offerRepo.find({
+      where: {
+        bidItem: {
+          bidRequest: { school: { id: userId } },
+        },
+        status: "accepted",
+      },
+      relations: ["supplier", "bidItem", "bidItem.bidRequest"],
+      order: { createdAt: "DESC" },
+    });
+
+    res.json({ awardedOffers });
+  } catch (error) {
+    next(error);
+  }
+};

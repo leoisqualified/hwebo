@@ -1,5 +1,5 @@
 import { useState } from "react";
-import AvailableBids from "../components/AvailableBids";
+import AvailableBids from "../components/SupplierAvailableBids";
 import MyOffers from "../components/MyOffers";
 import PaymentStatus from "../components/supplier/PaymentStatus";
 import { motion } from "framer-motion";

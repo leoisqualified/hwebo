@@ -59,10 +59,10 @@ export const login = async (
       return;
     }
 
-    if (!user.verified) {
-      res.status(403).json({ error: "Account not verified yet" });
-      return;
-    }
+    // if (!user.verified) {
+    //   res.status(403).json({ error: "Account not verified yet" });
+    //   return;
+    // }
 
     const token = jwt.sign(
       { userId: user.id, role: user.role },
