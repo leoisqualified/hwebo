@@ -70,8 +70,43 @@ export const login = async (
       { expiresIn: "7d" }
     );
 
-    res.json({ token });
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        verified: user.verified,
+      },
+    });
   } catch (error) {
     next(error);
+  }
+};
+
+export const getCurrentUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = (req as any).user.userId;
+
+    const user = await userRepository.findOneBy({ id: userId });
+
+    if (!user) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    res.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        verified: user.verified,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Something went wrong" });
   }
 };

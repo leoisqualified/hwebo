@@ -1,3 +1,5 @@
+import { Link, Outlet } from "react-router-dom";
+
 export default function AdminDashboard() {
   return (
     <div className="flex min-h-screen">
@@ -5,25 +7,24 @@ export default function AdminDashboard() {
       <aside className="w-64 bg-gray-800 text-white p-5">
         <h2 className="text-xl font-bold mb-6">Admin Panel</h2>
         <nav className="flex flex-col space-y-4">
-          <a href="#" className="hover:bg-gray-700 p-2 rounded">
+          <Link to="verify-suppliers" className="hover:bg-gray-700 p-2 rounded">
             Verify Suppliers
-          </a>
-          <a href="#" className="hover:bg-gray-700 p-2 rounded">
+          </Link>
+          <Link to="view-bids" className="hover:bg-gray-700 p-2 rounded">
             View Bids
-          </a>
-          <a href="#" className="hover:bg-gray-700 p-2 rounded">
+          </Link>
+          <Link to="manage-users" className="hover:bg-gray-700 p-2 rounded">
             Manage Users
-          </a>
-          <a href="#" className="hover:bg-gray-700 p-2 rounded">
+          </Link>
+          <Link to="reports" className="hover:bg-gray-700 p-2 rounded">
             Reports
-          </a>
+          </Link>
         </nav>
       </aside>
 
-      {/* Main Content */}
+      {/* Dynamic content area */}
       <main className="flex-1 p-8 bg-gray-100">
-        <h1 className="text-2xl font-semibold mb-4">Welcome, Admin!</h1>
-        {/* Put your admin dashboard components here */}
+        <Outlet />
       </main>
     </div>
   );

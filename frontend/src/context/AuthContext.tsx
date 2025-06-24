@@ -48,6 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (token: string) => {
+    setLoading(true); // <-- Add this to show that authentication is in process
     localStorage.setItem("token", token);
     api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
@@ -62,7 +63,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setRole(null);
       setToken(null);
     } finally {
-      setLoading(false);
+      setLoading(false); // <-- Only stop loading after user is fetched or failed
     }
   };
 

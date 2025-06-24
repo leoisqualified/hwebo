@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
 
 interface LoginFormData {
@@ -9,6 +10,7 @@ interface LoginFormData {
 }
 
 export default function Login() {
+  const { login } = useAuth();
   const {
     register,
     handleSubmit,
@@ -19,19 +21,13 @@ export default function Login() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       const res = await api.post("/auth/login", data);
-      localStorage.setItem("token", res.data.token);
+      const token = res.data.token;
+      await login(token); // wait for context to fully update
+
       alert("Login successful!");
 
-      // Redirect based on role
-      if (res.data.user.role === "admin") {
-        navigate("/admin");
-      } else if (res.data.user.role === "school") {
-        navigate("/school");
-      } else if (res.data.user.role === "supplier") {
-        navigate("/supplier");
-      } else {
-        navigate("/");
-      }
+      // Redirect to dashboard (the role-based logic will be handled there)
+      navigate("/dashboard");
     } catch (error: any) {
       alert(error.response?.data?.error || "Login failed");
     }

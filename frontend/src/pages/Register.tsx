@@ -43,9 +43,7 @@ export default function Register() {
           <div className="p-8 space-y-6">
             <div className="text-center">
               <h1 className="text-3xl font-bold text-[#1E3A8A]">Join HyɛBɔ</h1>
-              <p className="text-gray-500 mt-2">
-                Create your procurement account
-              </p>
+              <p className="text-gray-500 mt-2">Create your account</p>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">

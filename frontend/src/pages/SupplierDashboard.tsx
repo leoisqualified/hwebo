@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AvailableBids from "../components/SupplierAvailableBids";
 import MyOffers from "../components/MyOffers";
-import PaymentStatus from "../components/supplier/PaymentStatus";
+// import PaymentStatus from "../components/supplier/PaymentStatus";
 import { motion } from "framer-motion";
 
 export default function SupplierDashboard() {
@@ -12,7 +12,7 @@ export default function SupplierDashboard() {
       case "myOffers":
         return <MyOffers />;
       case "paymentStatus":
-        return <PaymentStatus />;
+      // return <PaymentStatus />;
       default:
         return <AvailableBids />;
     }

@@ -12,7 +12,7 @@ export default function RoleBasedDashboardRedirect() {
     case "admin":
       return <Navigate to="/admin-dashboard" replace />;
     case "supplier":
-      return <Navigate to="/supplier-dashboard" replace />;
+      return <Navigate to="/supplier/kyc" replace />;
     case "school":
       return <Navigate to="/school-dashboard" replace />;
     default:

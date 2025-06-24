@@ -13,6 +13,12 @@ import AvailableBids from "./pages/school/AvailableBids";
 import PostBid from "./pages/school/PostBid";
 import MyBids from "./pages/school/MyBids";
 import PaymentStatus from "./pages/school/PaymentStatus";
+// Admin Pages
+import AdminDashboard from "./pages/AdminDashboard";
+import VerifySuppliers from "./pages/admin/VerifySuppliers";
+import ViewBids from "./pages/admin/ViewBids";
+import ManageUsers from "./pages/admin/ManageUsers";
+// import Reports from "./pages/admin/Reports"; // optional
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -61,6 +67,20 @@ const router = createBrowserRouter([
       { path: "post-bid", element: <PostBid /> },
       { path: "my-bids", element: <MyBids /> },
       { path: "payment-status", element: <PaymentStatus /> },
+    ],
+  },
+  {
+    path: "/admin-dashboard",
+    element: (
+      <ProtectedRoute roles={["admin"]}>
+        <AdminDashboard />
+      </ProtectedRoute>
+    ),
+    children: [
+      { path: "verify-suppliers", element: <VerifySuppliers /> },
+      { path: "view-bids", element: <ViewBids /> },
+      { path: "manage-users", element: <ManageUsers /> },
+      // { path: "reports", element: <Reports /> }, // optional
     ],
   },
 ]);

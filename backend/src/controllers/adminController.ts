@@ -160,3 +160,19 @@ export const getUnverifiedSuppliers = async (
     next(error);
   }
 };
+
+export const getAllUsers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const users = await AppDataSource.getRepository(User).find({
+      relations: ["supplierProfile"],
+    });
+
+    res.status(200).json(users);
+  } catch (error) {
+    next(error);
+  }
+};
