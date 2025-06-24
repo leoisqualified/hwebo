@@ -9,7 +9,7 @@ import { supplierProfileSchema } from "../validations/supplierProfile";
 const router = Router();
 
 router.post(
-  "/profile",
+  "/kyc",
   authenticate,
   upload.fields([
     { name: "fdaLicense", maxCount: 1 },
