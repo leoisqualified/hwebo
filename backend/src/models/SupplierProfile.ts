@@ -14,7 +14,7 @@ export class SupplierProfile {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @OneToOne(() => User)
+  @OneToOne(() => User, (user) => user.supplierProfile)
   @JoinColumn()
   user!: User;
 

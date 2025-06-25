@@ -6,8 +6,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  OneToOne,
 } from "typeorm";
 import { BidRequest } from "./BidRequest";
+import { SupplierProfile } from "./SupplierProfile";
 
 @Entity()
 export class User {
@@ -28,6 +30,9 @@ export class User {
 
   @CreateDateColumn()
   createdAt!: Date;
+
+  @OneToOne(() => SupplierProfile, (profile) => profile.user)
+  supplierProfile!: SupplierProfile;
 
   @UpdateDateColumn()
   updatedAt!: Date;
