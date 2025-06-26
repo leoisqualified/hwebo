@@ -8,6 +8,7 @@ import adminRoutes from "./routes/admin";
 import supplierRoutes from "./routes/supplier";
 import bidRequestRoutes from "./routes/bidRequests";
 import cors from "cors";
+import path from "path";
 
 const allowedOrigin = process.env.APP_FRONTEND_URL;
 
@@ -27,6 +28,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/supplier", supplierRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/bid-requests", bidRequestRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 // Global error handler
 app.use(errorHandler);

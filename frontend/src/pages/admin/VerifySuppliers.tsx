@@ -27,6 +27,7 @@ export default function VerifySuppliers() {
   const [error, setError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
+  const FILE_BASE_URL = "http://localhost:5000/uploads/";
 
   useEffect(() => {
     const fetchSuppliers = async () => {
@@ -204,7 +205,7 @@ export default function VerifySuppliers() {
 
                     <div className="flex flex-wrap gap-3">
                       <a
-                        href={supplier.fdaLicenseUrl}
+                        href={`${FILE_BASE_URL}${supplier.fdaLicenseUrl}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-full text-sm font-medium text-[#1E3A8A] hover:bg-gray-50"
@@ -225,7 +226,7 @@ export default function VerifySuppliers() {
                         FDA License
                       </a>
                       <a
-                        href={supplier.registrationCertificateUrl}
+                        href={`${FILE_BASE_URL}${supplier.registrationCertificateUrl}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-full text-sm font-medium text-[#1E3A8A] hover:bg-gray-50"
@@ -246,7 +247,7 @@ export default function VerifySuppliers() {
                         Registration
                       </a>
                       <a
-                        href={supplier.ownerIdUrl}
+                        href={`${FILE_BASE_URL}${supplier.ownerIdUrl}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-full text-sm font-medium text-[#1E3A8A] hover:bg-gray-50"

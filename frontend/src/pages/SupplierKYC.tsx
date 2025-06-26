@@ -19,6 +19,7 @@ export default function SupplierKYC() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [momoNumber, setMomoNumber] = useState("");
   const [bankAccount, setBankAccount] = useState("");
+  const [kycSubmitted, setKycSubmitted] = useState(false);
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -39,6 +40,7 @@ export default function SupplierKYC() {
     formData.append("fdaLicense", fdaLicenseFile);
     formData.append("registrationCertificate", registrationCertificateFile);
     formData.append("ownerId", ownerIdFile);
+
     // Append the form text fields
     formData.append("businessName", businessName);
     formData.append("registrationNumber", registrationNumber);
@@ -60,9 +62,16 @@ export default function SupplierKYC() {
       setSuccessMessage(
         "KYC documents uploaded successfully. Awaiting verification."
       );
+
+      // Update local state to reflect submission immediately
+      setKycSubmitted(true);
+
+      // Clear file inputs
       setFdaLicenseFile(null);
       setRegistrationCertificateFile(null);
       setOwnerIdFile(null);
+
+      // Optionally refresh user data from backend
       fetchUser();
     } catch (error: any) {
       setErrorMessage(
@@ -117,6 +126,30 @@ export default function SupplierKYC() {
               </h3>
               <p className="text-gray-500 mt-1">
                 Your account is fully verified.
+              </p>
+            </div>
+          ) : kycSubmitted ? (
+            <div className="text-center py-6">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#FEF3C7] rounded-full mb-4">
+                <svg
+                  className="w-8 h-8 text-[#D97706]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900">
+                Verification Pending
+              </h3>
+              <p className="text-gray-500 mt-1">
+                Your documents have been submitted and are under review.
               </p>
             </div>
           ) : (
