@@ -4,6 +4,7 @@ import Register from "./pages/Register";
 import SupplierKYC from "./pages/SupplierKYC";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RoleBasedDashboardRedirect from "./components/RoleBasedDashboardRedirect";
+import SupplierDashboard from "./pages/SupplierDashboard";
 import SupplierAvailableBids from "./components/SupplierAvailableBids";
 import MyOffers from "./components/MyOffers";
 
@@ -40,22 +41,6 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/supplier/available-bids",
-    element: (
-      <ProtectedRoute roles={["supplier"]} requireVerification={true}>
-        <SupplierAvailableBids />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/supplier/my-offers",
-    element: (
-      <ProtectedRoute roles={["supplier"]} requireVerification={true}>
-        <MyOffers />
-      </ProtectedRoute>
-    ),
-  },
-  {
     path: "/school-dashboard",
     element: (
       <ProtectedRoute roles={["school"]}>
@@ -81,6 +66,20 @@ const router = createBrowserRouter([
       { path: "view-bids", element: <ViewBids /> },
       { path: "manage-users", element: <ManageUsers /> },
       // { path: "reports", element: <Reports /> }, // optional
+    ],
+  },
+  {
+    path: "/supplier-dashboard",
+    element: (
+      <ProtectedRoute roles={["supplier"]} requireVerification={true}>
+        <SupplierDashboard />
+      </ProtectedRoute>
+    ),
+    children: [
+      { path: "available-bids", element: <SupplierAvailableBids /> },
+      { path: "my-offers", element: <MyOffers /> },
+      // Uncomment if you add PaymentStatus later
+      // { path: "payment-status", element: <PaymentStatus /> },
     ],
   },
 ]);

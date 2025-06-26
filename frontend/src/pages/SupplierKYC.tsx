@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 export default function SupplierKYC() {
   const { user, fetchUser } = useAuth();
@@ -20,6 +21,14 @@ export default function SupplierKYC() {
   const [momoNumber, setMomoNumber] = useState("");
   const [bankAccount, setBankAccount] = useState("");
   const [kycSubmitted, setKycSubmitted] = useState(false);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user?.verified) {
+      navigate("/supplier/dashboard"); // Redirect to dashboard if verified
+    }
+  }, [user?.verified, navigate]);
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
