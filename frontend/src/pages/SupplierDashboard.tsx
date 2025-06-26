@@ -1,8 +1,18 @@
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 export default function SupplierDashboard() {
+  const navigate = useNavigate();
   const location = useLocation();
+  const handleLogout = () => {
+    // Clear authentication (depends on your auth setup)
+    localStorage.removeItem("token"); // Example: clearing token
+
+    // Optionally, you can clear user context/state here
+
+    // Redirect to login
+    navigate("/");
+  };
 
   // Extract current tab name from URL path
   const currentTab = location.pathname.includes("my-offers")
@@ -104,7 +114,10 @@ export default function SupplierDashboard() {
           </motion.div> */}
 
           <div className="mt-auto pt-8">
-            <button className="flex items-center space-x-3 p-3 rounded-lg hover:bg-[#1E40AF] w-full text-left">
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-3 p-3 rounded-lg hover:bg-[#1E40AF] w-full text-left"
+            >
               <svg
                 className="w-5 h-5"
                 fill="none"
