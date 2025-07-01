@@ -41,7 +41,7 @@ export default function SupplierDashboard() {
         <nav className="flex flex-col space-y-2">
           <motion.div whileHover={{ x: 5 }}>
             <NavLink
-              to="/supplier-dashboard/available-bids"
+              to="/supplier/dashboard/available-bids"
               className={({ isActive }) =>
                 `flex items-center space-x-3 p-3 rounded-lg transition-colors ${
                   isActive ? "bg-[#059669]" : "hover:bg-[#1E40AF]"
@@ -67,7 +67,7 @@ export default function SupplierDashboard() {
 
           <motion.div whileHover={{ x: 5 }}>
             <NavLink
-              to="/supplier-dashboard/my-offers"
+              to="/supplier/dashboard/my-offers"
               className={({ isActive }) =>
                 `flex items-center space-x-3 p-3 rounded-lg transition-colors ${
                   isActive ? "bg-[#059669]" : "hover:bg-[#1E40AF]"

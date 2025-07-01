@@ -14,6 +14,7 @@ import AvailableBids from "./pages/school/AvailableBids";
 import PostBid from "./pages/school/PostBid";
 import MyBids from "./pages/school/MyBids";
 import PaymentStatus from "./pages/school/PaymentStatus";
+
 // Admin Pages
 import AdminDashboard from "./pages/AdminDashboard";
 import VerifySuppliers from "./pages/admin/VerifySuppliers";
@@ -48,6 +49,7 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
+      { index: true, element: <AvailableBids /> },
       { path: "available-bids", element: <AvailableBids /> },
       { path: "post-bid", element: <PostBid /> },
       { path: "my-bids", element: <MyBids /> },
@@ -62,6 +64,7 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
+      { index: true, element: <VerifySuppliers /> },
       { path: "verify-suppliers", element: <VerifySuppliers /> },
       { path: "view-bids", element: <ViewBids /> },
       { path: "manage-users", element: <ManageUsers /> },
@@ -69,13 +72,14 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/supplier-dashboard",
+    path: "/supplier/dashboard",
     element: (
       <ProtectedRoute roles={["supplier"]} requireVerification={true}>
         <SupplierDashboard />
       </ProtectedRoute>
     ),
     children: [
+      { index: true, element: <SupplierAvailableBids /> },
       { path: "available-bids", element: <SupplierAvailableBids /> },
       { path: "my-offers", element: <MyOffers /> },
       // Uncomment if you add PaymentStatus later

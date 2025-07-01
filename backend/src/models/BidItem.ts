@@ -5,6 +5,7 @@ import {
   Column,
   ManyToOne,
   OneToMany,
+  CreateDateColumn,
 } from "typeorm";
 import { BidRequest } from "./BidRequest";
 import { SupplierOffer } from "./SupplierOffer";
@@ -13,9 +14,6 @@ import { SupplierOffer } from "./SupplierOffer";
 export class BidItem {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
-
-  @ManyToOne(() => BidRequest, (bid) => bid.items)
-  bidRequest!: BidRequest;
 
   @Column()
   itemName!: string; // e.g., "Maize"
@@ -26,6 +24,23 @@ export class BidItem {
   @Column()
   unit!: string; // e.g., "sacks"
 
+  @Column({ nullable: true })
+  category!: string;
+
+  @Column({ default: "open" })
+  status!: string; // e.g. 'open', 'closed'
+
+  @Column({ type: "text", nullable: true })
+  description!: string;
+
+  @ManyToOne(() => BidRequest, (bidRequest) => bidRequest.items, {
+    onDelete: "CASCADE",
+  })
+  bidRequest!: BidRequest;
+
   @OneToMany(() => SupplierOffer, (offer) => offer.bidItem)
   offers!: SupplierOffer[];
+
+  @CreateDateColumn()
+  createdAt!: Date;
 }

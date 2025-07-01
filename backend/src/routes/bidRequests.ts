@@ -19,7 +19,7 @@ router.post(
   createBidRequest
 );
 router.get("/active", authenticate, getActiveBidRequests);
-router.get("/:id", authenticate, getBidRequestById);
 router.get("/my-bids", authenticate, getMyBids);
+router.get("/:id", authenticate, getBidRequestById);
 
 export default router;

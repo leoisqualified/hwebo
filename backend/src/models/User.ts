@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { BidRequest } from "./BidRequest";
 import { SupplierProfile } from "./SupplierProfile";
+import { nullable } from "zod";
 
 @Entity()
 export class User {
@@ -18,6 +19,9 @@ export class User {
 
   @Column({ unique: true })
   email!: string;
+
+  @Column({ nullable: true })
+  name!: string;
 
   @Column()
   password!: string;

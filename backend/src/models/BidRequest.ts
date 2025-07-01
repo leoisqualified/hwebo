@@ -21,6 +21,9 @@ export class BidRequest {
   @Column()
   title!: string;
 
+  @Column({ nullable: true })
+  budget!: string;
+
   @Column({ type: "text", nullable: true })
   description?: string;
 

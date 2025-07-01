@@ -22,6 +22,7 @@ export const createBidRequest = async (
 
     if (user.role !== "school") {
       res.status(403).json({ error: "Only schools can create bid requests." });
+      return; // Important: stop further execution if unauthorized
     }
 
     const bidItems = items.map((item: any) => {
@@ -29,6 +30,8 @@ export const createBidRequest = async (
       bidItem.itemName = item.itemName;
       bidItem.quantity = item.quantity;
       bidItem.unit = item.unit;
+      bidItem.category = item.category;
+      bidItem.description = item.description;
       return bidItem;
     });
 
@@ -40,11 +43,41 @@ export const createBidRequest = async (
       items: bidItems,
     });
 
+    // Link the bidRequest to each bidItem
+    bidRequest.items.forEach((item) => {
+      item.bidRequest = bidRequest;
+    });
+
     await bidRequestRepo.save(bidRequest);
-    res
-      .status(201)
-      .json({ message: "Bid request created successfully.", bidRequest });
+
+    // Prepare safe response without circular references
+    const responsePayload = {
+      id: bidRequest.id,
+      title: bidRequest.title,
+      description: bidRequest.description,
+      deadline: bidRequest.deadline,
+      school: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
+      items: bidRequest.items.map((item) => ({
+        id: item.id,
+        itemName: item.itemName,
+        quantity: item.quantity,
+        unit: item.unit,
+        category: item.category,
+        description: item.description,
+      })),
+      createdAt: bidRequest.createdAt,
+    };
+
+    res.status(201).json({
+      message: "Bid request created successfully.",
+      bidRequest: responsePayload,
+    });
   } catch (error) {
+    console.error("Error occurred:", error);
     next(error);
   }
 };
@@ -99,14 +132,19 @@ export const getMyBids = async (
   try {
     const userId = (req as any).user.userId;
 
-    const myBids = await bidRequestRepo.find({
-      where: { school: { id: userId } },
-      relations: ["items", "school"],
-      order: { createdAt: "DESC" },
-    });
+    const myBids = await bidRequestRepo
+      .createQueryBuilder("bidRequest")
+      .leftJoinAndSelect("bidRequest.items", "items")
+      .leftJoinAndSelect("items.offers", "offers")
+      .leftJoinAndSelect("offers.supplier", "supplier")
+      .leftJoinAndSelect("bidRequest.school", "school")
+      .where("school.id = :userId", { userId })
+      .orderBy("bidRequest.createdAt", "DESC")
+      .getMany();
 
     res.json({ myBids });
   } catch (error) {
+    console.error("Error fetching my bids:", error);
     next(error);
   }
 };

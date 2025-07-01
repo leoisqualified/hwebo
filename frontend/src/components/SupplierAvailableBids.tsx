@@ -1,181 +1,139 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
-import { motion } from "framer-motion";
 
-interface Bid {
+interface BidItem {
   id: string;
+  itemName: string;
+  quantity: number;
+  unit: string;
+  category?: string;
+}
+
+interface BidRequest {
+  bidRequestId: string;
   title: string;
   description: string;
-  deadline: string; // ISO date string
+  deadline: string;
   school: string;
-  budget: string;
-  category: string;
+  items: BidItem[];
 }
 
-export default function AvailableBids() {
-  const [bids, setBids] = useState<Bid[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
+const SupplierAvailableBids = () => {
+  const [bids, setBids] = useState<BidRequest[]>([]);
+  const [offers, setOffers] = useState<
+    Record<string, { pricePerUnit: string; notes: string }>
+  >({});
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchBids = async () => {
-      try {
-        const res = await api.get("/supplier/available-bids");
-        setBids(res.data);
-      } catch (err) {
-        setError("Failed to fetch bids. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBids();
+    fetchAvailableBids();
   }, []);
 
-  const placeOffer = (bidId: string) => {
-    // TODO: Implement actual offer placement logic
-    alert(`Place offer for Bid ID: ${bidId}`);
+  const fetchAvailableBids = async () => {
+    try {
+      const res = await api.get("/supplier-offers/available-bids");
+      setBids(Array.isArray(res.data.bids) ? res.data.bids : []);
+    } catch (error) {
+      console.error("Error fetching available bids", error);
+    }
   };
 
-  const filteredBids = bids.filter(
-    (bid) =>
-      bid.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      bid.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      bid.school.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleInputChange = (
+    bidItemId: string,
+    field: "pricePerUnit" | "notes",
+    value: string
+  ) => {
+    setOffers((prev) => ({
+      ...prev,
+      [bidItemId]: {
+        ...prev[bidItemId],
+        [field]: value,
+      },
+    }));
+  };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#059669]"></div>
-      </div>
-    );
-  }
+  const submitOffer = async (bidItemId: string) => {
+    const { pricePerUnit, notes } = offers[bidItemId] || {};
 
-  if (error) {
-    return (
-      <div className="bg-[#FEE2E2] border border-[#DC2626] text-[#DC2626] p-4 rounded-xl">
-        <p>{error}</p>
-      </div>
-    );
-  }
+    if (!pricePerUnit) {
+      alert("Please enter a price per unit.");
+      return;
+    }
 
-  if (filteredBids.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <svg
-          className="mx-auto h-12 w-12 text-gray-400"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        <h3 className="mt-2 text-lg font-medium text-gray-900">
-          No bids available
-        </h3>
-        <p className="mt-1 text-gray-500">
-          {searchTerm
-            ? "No bids match your search."
-            : "There are currently no open bids."}
-        </p>
-      </div>
-    );
-  }
+    try {
+      setLoading(true);
+      await api.post("/supplier", {
+        bidItemId,
+        pricePerUnit: parseFloat(pricePerUnit),
+        notes,
+      });
+      alert("Offer submitted successfully!");
+      fetchAvailableBids(); // Optional: Refresh the list
+    } catch (error: any) {
+      console.error("Error submitting offer", error);
+      alert(error.response?.data?.error || "Error submitting offer");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-[#1E3A8A]">Available Bids</h1>
-        <div className="relative w-64">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg
-              className="h-5 w-5 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-          <input
-            type="text"
-            placeholder="Search bids..."
-            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#059669] focus:border-[#059669] outline-none transition"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredBids.map((bid, index) => (
-          <motion.div
-            key={bid.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
-            className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow"
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">Available Bids</h2>
+      {bids.length === 0 ? (
+        <p>No available bids at the moment.</p>
+      ) : (
+        bids.map((bid) => (
+          <div
+            key={bid.bidRequestId}
+            className="mb-8 p-4 border rounded shadow"
           >
-            <div className="p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h2 className="text-lg font-bold text-[#1E3A8A]">
-                    {bid.title}
-                  </h2>
-                  <p className="text-sm text-[#059669] font-medium mt-1">
-                    {bid.school}
-                  </p>
-                </div>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#F3F4F6] text-gray-800">
-                  {bid.category}
-                </span>
+            <h3 className="text-xl font-semibold">{bid.title}</h3>
+            <p className="text-gray-600">{bid.description}</p>
+            <p className="text-sm text-gray-500">
+              Deadline: {new Date(bid.deadline).toLocaleString()}
+            </p>
+            <p className="text-sm text-gray-500">School: {bid.school}</p>
+
+            {bid.items.map((item) => (
+              <div key={item.id} className="mt-4 p-4 border rounded bg-gray-50">
+                <h4 className="font-semibold">{item.itemName}</h4>
+                <p>
+                  Quantity: {item.quantity} {item.unit}
+                </p>
+                <p>Category: {item.category}</p>
+
+                <input
+                  type="number"
+                  placeholder="Price per Unit"
+                  className="mt-2 p-2 border rounded w-full"
+                  value={offers[item.id]?.pricePerUnit || ""}
+                  onChange={(e) =>
+                    handleInputChange(item.id, "pricePerUnit", e.target.value)
+                  }
+                />
+                <textarea
+                  placeholder="Notes (optional)"
+                  className="mt-2 p-2 border rounded w-full"
+                  value={offers[item.id]?.notes || ""}
+                  onChange={(e) =>
+                    handleInputChange(item.id, "notes", e.target.value)
+                  }
+                />
+                <button
+                  onClick={() => submitOffer(item.id)}
+                  className="mt-2 bg-blue-600 text-white px-4 py-2 rounded"
+                  disabled={loading}
+                >
+                  {loading ? "Submitting..." : "Submit Offer"}
+                </button>
               </div>
-
-              <p className="mt-3 text-gray-600 line-clamp-3">
-                {bid.description}
-              </p>
-
-              <div className="mt-4 grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-xs text-gray-500">Budget</p>
-                  <p className="font-medium">{bid.budget}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500">Deadline</p>
-                  <p className="font-medium">
-                    {new Date(bid.deadline).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </p>
-                </div>
-              </div>
-
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => placeOffer(bid.id)}
-                className="mt-6 w-full bg-[#059669] hover:bg-[#047857] text-white py-2 px-4 rounded-xl font-medium transition-colors"
-              >
-                Place Offer
-              </motion.button>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+            ))}
+          </div>
+        ))
+      )}
     </div>
   );
-}
+};
+
+export default SupplierAvailableBids;

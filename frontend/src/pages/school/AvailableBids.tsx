@@ -40,10 +40,10 @@ export default function AvailableBids() {
   useEffect(() => {
     const fetchBids = async () => {
       try {
-        const response = await api.get("/school/my-bids", {
+        const response = await api.get("/bid-requests/my-bids", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setBids(response.data.bids);
+        setBids(response?.data?.myBids ?? []);
       } catch (error) {
         console.error("Error fetching bids:", error);
       } finally {
@@ -119,7 +119,7 @@ export default function AvailableBids() {
       </div>
 
       {filteredBids.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+        <div className="bg-white p-8 text-center">
           <svg
             className="mx-auto h-12 w-12 text-gray-400"
             fill="none"
@@ -278,8 +278,12 @@ export default function AvailableBids() {
                                             : "bg-[#FEF3C7] text-[#D97706]"
                                         }`}
                                       >
-                                        {offer.status.charAt(0).toUpperCase() +
-                                          offer.status.slice(1)}
+                                        {String(offer.status || "unknown")
+                                          .charAt(0)
+                                          .toUpperCase() +
+                                          String(
+                                            offer.status || "unknown"
+                                          ).slice(1)}
                                       </span>
                                       {new Date(bid.deadline) < new Date() &&
                                         offer.status === "pending" && (

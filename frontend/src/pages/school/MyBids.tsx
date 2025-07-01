@@ -15,7 +15,7 @@ interface Bid {
   title: string;
   description: string;
   deadline: string;
-  status: "draft" | "published" | "closed" | "awarded";
+  status?: "draft" | "published" | "closed" | "awarded" | string | null;
   items: BidItem[];
   createdAt: string;
   offersCount: number;
@@ -50,7 +50,7 @@ export default function MyBids() {
     return matchesSearch && matchesStatus;
   });
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string | undefined | null) => {
     switch (status) {
       case "published":
         return "bg-[#D1FAE5] text-[#059669]";
@@ -63,6 +63,13 @@ export default function MyBids() {
       default:
         return "bg-gray-100 text-gray-800";
     }
+  };
+
+  const formatStatus = (status: string | undefined | null) => {
+    if (typeof status === "string" && status.trim() !== "") {
+      return status.charAt(0).toUpperCase() + status.slice(1);
+    }
+    return "Unknown";
   };
 
   if (loading) {
@@ -122,7 +129,7 @@ export default function MyBids() {
       </div>
 
       {filteredBids.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+        <div className="bg-white p-8 text-center">
           <svg
             className="mx-auto h-12 w-12 text-gray-400"
             fill="none"
@@ -169,7 +176,7 @@ export default function MyBids() {
                       bid.status
                     )}`}
                   >
-                    {bid.status.charAt(0).toUpperCase() + bid.status.slice(1)}
+                    {formatStatus(bid.status)}
                   </span>
                 </div>
 

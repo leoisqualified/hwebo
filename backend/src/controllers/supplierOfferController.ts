@@ -4,10 +4,13 @@ import { AppDataSource } from "../config/db";
 import { SupplierOffer } from "../models/SupplierOffer";
 import { BidItem } from "../models/BidItem";
 import { User } from "../models/User";
+import { MoreThan } from "typeorm";
+import { BidRequest } from "../models/BidRequest";
 
 const offerRepo = AppDataSource.getRepository(SupplierOffer);
 const bidItemRepo = AppDataSource.getRepository(BidItem);
 const userRepo = AppDataSource.getRepository(User);
+const bidRequestRepo = AppDataSource.getRepository(BidRequest);
 
 export const submitOffer = async (
   req: Request,
@@ -16,26 +19,62 @@ export const submitOffer = async (
 ): Promise<void> => {
   try {
     const { bidItemId, pricePerUnit, notes } = req.body;
-
     const userId = (req as any).user.userId;
+
     const user = await userRepo.findOneByOrFail({ id: userId });
 
     if (user.role !== "supplier") {
       res.status(403).json({ error: "Only suppliers can submit offers." });
+      return;
     }
 
-    const bidItem = await bidItemRepo.findOneByOrFail({ id: bidItemId });
+    const bidItem = await bidItemRepo.findOne({
+      where: { id: bidItemId },
+      relations: ["bidRequest"],
+    });
+
+    if (!bidItem) {
+      res.status(404).json({ error: "Bid item not found." });
+      return;
+    }
+
+    // Check if bid request is still open
+    if (new Date(bidItem.bidRequest.deadline) < new Date()) {
+      res
+        .status(400)
+        .json({ error: "Cannot submit offer. Deadline has passed." });
+      return;
+    }
+
+    // Optional: Prevent duplicate offers from the same supplier on the same item
+    const existingOffer = await offerRepo.findOne({
+      where: {
+        supplier: { id: userId },
+        bidItem: { id: bidItemId },
+      },
+    });
+
+    if (existingOffer) {
+      res
+        .status(400)
+        .json({ error: "You have already submitted an offer for this item." });
+      return;
+    }
 
     const offer = offerRepo.create({
       supplier: user,
       bidItem,
       pricePerUnit,
       notes,
+      status: "pending", // optional: you can add initial status
     });
 
     await offerRepo.save(offer);
 
-    res.status(201).json({ message: "Offer submitted successfully.", offer });
+    res.status(201).json({
+      message: "Offer submitted successfully.",
+      offer,
+    });
   } catch (error) {
     next(error);
   }
@@ -132,6 +171,41 @@ export const getSchoolPayments = async (
     });
 
     res.json({ awardedOffers });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAvailableBids = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const bidRequests = await bidRequestRepo
+      .createQueryBuilder("bidRequest")
+      .leftJoinAndSelect("bidRequest.school", "school")
+      .leftJoinAndSelect("bidRequest.items", "items")
+      .where("bidRequest.deadline > :now", { now: new Date() })
+      .orderBy("bidRequest.deadline", "ASC")
+      .getMany();
+
+    const formattedBids = bidRequests.map((bidRequest) => ({
+      bidRequestId: bidRequest.id,
+      title: bidRequest.title,
+      description: bidRequest.description,
+      deadline: bidRequest.deadline,
+      school: bidRequest.school.name,
+      items: (bidRequest.items || []).map((item: any) => ({
+        id: item.id,
+        itemName: item.itemName,
+        quantity: item.quantity,
+        unit: item.unit,
+        category: item.category,
+      })),
+    }));
+
+    res.json(formattedBids);
   } catch (error) {
     next(error);
   }

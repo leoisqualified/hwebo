@@ -7,6 +7,7 @@ import { errorHandler } from "./middlewares/errorHandler";
 import adminRoutes from "./routes/admin";
 import supplierRoutes from "./routes/supplier";
 import bidRequestRoutes from "./routes/bidRequests";
+import supplierOfferRoutes from "./routes/supplierOffer";
 import cors from "cors";
 import path from "path";
 
@@ -29,6 +30,7 @@ app.use("/api/supplier", supplierRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/bid-requests", bidRequestRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
+app.use("/api/supplier-offers", supplierOfferRoutes);
 
 // Global error handler
 app.use(errorHandler);

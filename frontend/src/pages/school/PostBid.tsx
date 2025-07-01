@@ -8,8 +8,9 @@ export default function PostBid() {
   const [description, setDescription] = useState("");
   const [deadline, setDeadline] = useState("");
   const [items, setItems] = useState([
-    { itemName: "", quantity: 1, unit: "", description: "" },
+    { itemName: "", quantity: 1, unit: "", description: "", category: "" },
   ]);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ export default function PostBid() {
   const addItem = () => {
     setItems([
       ...items,
-      { itemName: "", quantity: 1, unit: "", description: "" },
+      { itemName: "", quantity: 1, unit: "", description: "", category: "" },
     ]);
   };
 
@@ -58,7 +59,7 @@ export default function PostBid() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-xl shadow-sm p-8 border border-gray-200"
+        className="bg-white  p-8 "
       >
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-[#1E3A8A]">Create New Bid</h1>
@@ -190,6 +191,22 @@ export default function PostBid() {
                         />
                       </div>
                     </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <label className="block text-sm text-gray-500 mb-1">
+                      Category *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Stationery, Furniture"
+                      value={item.category}
+                      onChange={(e) =>
+                        handleItemChange(index, "category", e.target.value)
+                      }
+                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#059669] focus:border-[#059669] outline-none transition"
+                      required
+                    />
                   </div>
 
                   <div className="mt-3">
