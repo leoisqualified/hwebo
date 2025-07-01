@@ -181,6 +181,8 @@ export const getAvailableBids = async (
   res: Response,
   next: NextFunction
 ) => {
+  console.log("GET /supplier-offers/available-bids called");
+
   try {
     const bidRequests = await bidRequestRepo
       .createQueryBuilder("bidRequest")
@@ -189,6 +191,8 @@ export const getAvailableBids = async (
       .where("bidRequest.deadline > :now", { now: new Date() })
       .orderBy("bidRequest.deadline", "ASC")
       .getMany();
+
+    console.log("Raw bidRequests from DB:", bidRequests);
 
     const formattedBids = bidRequests.map((bidRequest) => ({
       bidRequestId: bidRequest.id,
@@ -205,7 +209,9 @@ export const getAvailableBids = async (
       })),
     }));
 
-    res.json(formattedBids);
+    console.log("Filtered active bids:", formattedBids);
+
+    res.json({ bids: formattedBids });
   } catch (error) {
     next(error);
   }
