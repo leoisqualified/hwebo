@@ -181,7 +181,7 @@ export const getAvailableBids = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log("GET /supplier-offers/available-bids called");
+  // console.log("GET /supplier-offers/available-bids called");
 
   try {
     const bidRequests = await bidRequestRepo
@@ -192,7 +192,7 @@ export const getAvailableBids = async (
       .orderBy("bidRequest.deadline", "ASC")
       .getMany();
 
-    console.log("Raw bidRequests from DB:", bidRequests);
+    // console.log("Raw bidRequests from DB:", bidRequests);
 
     const formattedBids = bidRequests.map((bidRequest) => ({
       bidRequestId: bidRequest.id,
@@ -209,7 +209,7 @@ export const getAvailableBids = async (
       })),
     }));
 
-    console.log("Filtered active bids:", formattedBids);
+    // console.log("Filtered active bids:", formattedBids);
 
     res.json({ bids: formattedBids });
   } catch (error) {

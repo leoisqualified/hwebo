@@ -203,7 +203,7 @@ export default function AvailableBids() {
 
                     <div className="mb-4 flex items-center space-x-4">
                       <div>
-                        <p className="text-xs text-gray-500">Deadline</p>
+                        <p className="text-xs text-red-500">Deadline</p>
                         <p className="font-medium">
                           {new Date(bid.deadline).toLocaleDateString("en-US", {
                             year: "numeric",
@@ -215,7 +215,7 @@ export default function AvailableBids() {
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500">Status</p>
+                        {/* <p className="text-xs text-gray-500">Status</p> */}
                         <p className="font-medium capitalize">{bid.status}</p>
                       </div>
                     </div>
@@ -255,10 +255,18 @@ export default function AvailableBids() {
                                       </p>
                                       <div className="flex space-x-4 mt-1 text-sm">
                                         <span>
-                                          ${offer.pricePerUnit.toFixed(2)}/unit
+                                          GH₵
+                                          {Number(offer.pricePerUnit).toFixed(
+                                            2
+                                          )}
+                                          /unit
                                         </span>
                                         <span>
-                                          ${offer.totalPrice.toFixed(2)} total
+                                          GH₵{" "}
+                                          {Number(offer.pricePerUnit).toFixed(
+                                            2
+                                          )}{" "}
+                                          total
                                         </span>
                                         <span>{offer.deliveryTime}</span>
                                       </div>

@@ -71,7 +71,7 @@ const SupplierAvailableBids = () => {
 
     try {
       setLoading(true);
-      await api.post("/supplier", {
+      await api.post("/supplier-offers", {
         bidItemId,
         pricePerUnit: parseFloat(pricePerUnit),
         notes,
