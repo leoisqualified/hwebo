@@ -57,7 +57,7 @@ export default function AvailableBids() {
   const handleSelectOffer = async (offerId: string) => {
     try {
       await api.post(
-        `/school/select-offer/${offerId}`,
+        `/supplier-offers/select/${offerId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -263,9 +263,10 @@ export default function AvailableBids() {
                                         </span>
                                         <span>
                                           GH₵{" "}
-                                          {Number(offer.pricePerUnit).toFixed(
-                                            2
-                                          )}{" "}
+                                          {(
+                                            Number(offer.pricePerUnit) *
+                                            item.quantity
+                                          ).toFixed(2)}{" "}
                                           total
                                         </span>
                                         <span>{offer.deliveryTime}</span>

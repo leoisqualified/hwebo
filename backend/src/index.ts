@@ -6,7 +6,7 @@ AppDataSource.initialize()
   .then(() => {
     console.log("Database connected successfully.");
     app.listen(env.PORT, () => {
-      console.log(`🚀 HyɛBɔ backend running on http://localhost:${env.PORT}`);
+      console.log(`HyɛBɔ backend running on http://localhost:${env.PORT}`);
     });
   })
   .catch((err) => {
