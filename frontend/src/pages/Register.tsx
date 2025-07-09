@@ -53,73 +53,6 @@ export default function Register() {
           {/* Decorative header strip */}
           <div className="h-2 bg-gradient-to-r from-[#059669] to-[#FBBF24]"></div>
 
-          {/* Notification area */}
-          {notification && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className={`px-4 py-3 rounded-md mx-4 my-2 ${
-                notification.type === "success"
-                  ? "bg-[#D1FAE5] text-[#059669]"
-                  : "bg-[#FEE2E2] text-[#DC2626]"
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  {notification.type === "success" ? (
-                    <svg
-                      className="h-5 w-5 mr-2"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  ) : (
-                    <svg
-                      className="h-5 w-5 mr-2"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  )}
-                  <span className="font-medium">{notification.message}</span>
-                </div>
-                <button
-                  onClick={() => setNotification(null)}
-                  className="ml-2 text-current hover:text-opacity-70"
-                >
-                  <svg
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </motion.div>
-          )}
-
           <div className="p-8 space-y-6">
             <div className="text-center">
               <h1 className="text-3xl font-bold text-[#1E3A8A]">Join HyɛBɔ</h1>
@@ -269,6 +202,75 @@ export default function Register() {
                   </p>
                 )}
               </div>
+
+              {/* Notification area */}
+              {notification && (
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className={`px-4 py-3 rounded-md mx-4 my-2 ${
+                    notification.type === "success"
+                      ? "bg-[#D1FAE5] text-[#059669]"
+                      : "bg-[#FEE2E2] text-[#DC2626]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      {notification.type === "success" ? (
+                        <svg
+                          className="h-5 w-5 mr-2"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                      ) : (
+                        <svg
+                          className="h-5 w-5 mr-2"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                      )}
+                      <span className="font-medium">
+                        {notification.message}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setNotification(null)}
+                      className="ml-2 text-current hover:text-opacity-70"
+                    >
+                      <svg
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </motion.div>
+              )}
 
               <motion.button
                 whileHover={{ scale: 1.02 }}
