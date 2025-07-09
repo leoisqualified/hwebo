@@ -15,7 +15,7 @@ const seedDatabase = async () => {
     // 1. Create Users
     const admin = await AppDataSource.getRepository(User).save({
       email: "admin@example.com",
-      password: "hashed_password", // Replace with actual hash
+      password: "password", // Replace with actual hash
       role: "admin",
       verified: true,
     });
@@ -23,7 +23,7 @@ const seedDatabase = async () => {
     const school = await AppDataSource.getRepository(User).save({
       email: "school@example.com",
       name: "Sample School",
-      password: "hashed_password", // Replace with actual hash
+      password: "password", // Replace with actual hash
       role: "school",
       verified: true,
     });
@@ -31,7 +31,7 @@ const seedDatabase = async () => {
     const supplier = await AppDataSource.getRepository(User).save({
       email: "supplier@example.com",
       name: "Sample Supplier",
-      password: "hashed_password", // Replace with actual hash
+      password: "password", // Replace with actual hash
       role: "supplier",
       verified: true,
     });
