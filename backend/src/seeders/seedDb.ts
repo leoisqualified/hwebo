@@ -6,6 +6,7 @@ import { BidItem } from "../../src/models/BidItem";
 import { SupplierOffer } from "../../src/models/SupplierOffer";
 import { Payment } from "../../src/models/Payment";
 import { Delivery } from "../../src/models/Delivery";
+import bcrypt from "bcryptjs";
 
 const seedDatabase = async () => {
   try {
@@ -15,7 +16,7 @@ const seedDatabase = async () => {
     // 1. Create Users
     const admin = await AppDataSource.getRepository(User).save({
       email: "admin@example.com",
-      password: "password", // Replace with actual hash
+      password: await bcrypt.hash("password", 10),
       role: "admin",
       verified: true,
     });
@@ -23,7 +24,7 @@ const seedDatabase = async () => {
     const school = await AppDataSource.getRepository(User).save({
       email: "school@example.com",
       name: "Sample School",
-      password: "password", // Replace with actual hash
+      password: await bcrypt.hash("password", 10),
       role: "school",
       verified: true,
     });
@@ -31,7 +32,7 @@ const seedDatabase = async () => {
     const supplier = await AppDataSource.getRepository(User).save({
       email: "supplier@example.com",
       name: "Sample Supplier",
-      password: "password", // Replace with actual hash
+      password: await bcrypt.hash("password", 10),
       role: "supplier",
       verified: true,
     });
@@ -57,7 +58,7 @@ const seedDatabase = async () => {
       title: "Food Supply for Term 1",
       budget: "5000",
       description: "We need maize and rice for the upcoming term.",
-      deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+      deadline: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes from now
     });
 
     // 4. Create Bid Items
@@ -124,10 +125,10 @@ const seedDatabase = async () => {
       status: "pending",
     });
 
-    console.log("✅ Database seeded successfully.");
+    console.log("Database seeded successfully.");
     process.exit(0);
   } catch (error) {
-    console.error("❌ Error seeding database:", error);
+    console.error("Error seeding database:", error);
     process.exit(1);
   }
 };

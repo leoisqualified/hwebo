@@ -1,5 +1,5 @@
 import { DataSource } from "typeorm";
-import { env } from "./index"; // <-- import the validated env, NOT the schema
+import { env } from "./index";
 import { User } from "../models/User";
 import { BidItem } from "../models/BidItem";
 import { BidRequest } from "../models/BidRequest";
