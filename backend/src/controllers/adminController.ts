@@ -118,7 +118,26 @@ export const getAllBids = async (
       relations: ["items", "items.offers", "school"],
     });
 
-    res.status(200).json(bids);
+    const enrichedBids = bids.map((bid) => {
+      const statuses = bid.items.map((item) => item.status);
+      const uniqueStatuses = [...new Set(statuses)];
+
+      let overallStatus = "unknown";
+      if (uniqueStatuses.length === 1) {
+        overallStatus = uniqueStatuses[0];
+      } else if (uniqueStatuses.includes("open")) {
+        overallStatus = "open";
+      } else {
+        overallStatus = "mixed";
+      }
+
+      return {
+        ...bid,
+        status: overallStatus,
+      };
+    });
+
+    res.status(200).json(enrichedBids);
   } catch (error) {
     next(error);
   }
