@@ -12,7 +12,6 @@ import MyOffers from "./components/MyOffers";
 import SchoolDashboard from "./pages/SchoolDashboard";
 import AvailableBids from "./pages/school/AvailableBids";
 import PostBid from "./pages/school/PostBid";
-import MyBids from "./pages/school/MyBids";
 import PaymentStatus from "./pages/school/PaymentStatus";
 
 // Admin Pages
@@ -21,6 +20,9 @@ import VerifySuppliers from "./pages/admin/VerifySuppliers";
 import ViewBids from "./pages/admin/ViewBids";
 import ManageUsers from "./pages/admin/ManageUsers";
 // import Reports from "./pages/admin/Reports"; // optional
+
+// Supplier Pages
+import MyAwards from "./pages/supplier/MyAwards";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -52,7 +54,6 @@ const router = createBrowserRouter([
       { index: true, element: <AvailableBids /> },
       { path: "available-bids", element: <AvailableBids /> },
       { path: "post-bid", element: <PostBid /> },
-      { path: "my-bids", element: <MyBids /> },
       { path: "payment-status", element: <PaymentStatus /> },
     ],
   },
@@ -82,6 +83,7 @@ const router = createBrowserRouter([
       { index: true, element: <SupplierAvailableBids /> },
       { path: "available-bids", element: <SupplierAvailableBids /> },
       { path: "my-offers", element: <MyOffers /> },
+      { path: "my-awards", element: <MyAwards /> },
       // Uncomment if you add PaymentStatus later
       // { path: "payment-status", element: <PaymentStatus /> },
     ],

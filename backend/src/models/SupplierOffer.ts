@@ -31,4 +31,10 @@ export class SupplierOffer {
 
   @CreateDateColumn()
   createdAt!: Date;
+
+  @Column({ type: "decimal", precision: 10, scale: 2, nullable: true })
+  totalPrice!: number;
+
+  @Column({ type: "varchar", nullable: true })
+  deliveryTime!: string;
 }

@@ -4,7 +4,6 @@ import { AppDataSource } from "../config/db";
 import { SupplierOffer } from "../models/SupplierOffer";
 import { BidItem } from "../models/BidItem";
 import { User } from "../models/User";
-import { MoreThan } from "typeorm";
 import { BidRequest } from "../models/BidRequest";
 
 const offerRepo = AppDataSource.getRepository(SupplierOffer);
@@ -107,6 +106,7 @@ export const selectWinningOffer = async (
 ): Promise<void> => {
   try {
     const { offerId } = req.params;
+    const { deliveryTime } = req.body;
     const userId = (req as any).user.userId;
 
     const offer = await offerRepo.findOne({
@@ -142,6 +142,8 @@ export const selectWinningOffer = async (
 
     // Accept the selected offer
     offer.status = "accepted";
+    offer.totalPrice = offer.pricePerUnit * offer.bidItem.quantity;
+    offer.deliveryTime = offer.deliveryTime ?? "3 days";
     await offerRepo.save(offer);
 
     res.status(200).json({ message: "Offer selected successfully." });
@@ -212,6 +214,29 @@ export const getAvailableBids = async (
     // console.log("Filtered active bids:", formattedBids);
 
     res.json({ bids: formattedBids });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMyAwardedOffers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = (req as any).user.userId;
+
+    const awardedOffers = await offerRepo.find({
+      where: {
+        supplier: { id: userId },
+        status: "accepted",
+      },
+      relations: ["bidItem", "bidItem.bidRequest", "bidItem.bidRequest.school"],
+      order: { createdAt: "DESC" },
+    });
+
+    res.status(200).json({ awardedOffers });
   } catch (error) {
     next(error);
   }

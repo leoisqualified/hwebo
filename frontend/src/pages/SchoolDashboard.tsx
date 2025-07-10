@@ -75,7 +75,7 @@ export default function SchoolDashboard() {
             <span>Post New Bid</span>
           </Link>
 
-          <Link
+          {/* <Link
             to="/school-dashboard/my-bids"
             className={navLinkClass("my-bids")}
           >
@@ -93,7 +93,7 @@ export default function SchoolDashboard() {
               />
             </svg>
             <span>My Active Bids</span>
-          </Link>
+          </Link> */}
 
           <Link
             to="/school-dashboard/payment-status"

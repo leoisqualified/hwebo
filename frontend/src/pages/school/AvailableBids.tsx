@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { motion } from "framer-motion";
+import { FiCheckCircle, FiAlertCircle, FiX } from "react-icons/fi";
 
 interface Bid {
   id: string;
@@ -36,6 +37,13 @@ export default function AvailableBids() {
   const [refresh, setRefresh] = useState(false);
   const [expandedBid, setExpandedBid] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [selectedOfferId, setSelectedOfferId] = useState<string | null>(null);
+  const [deliveryTime, setDeliveryTime] = useState("");
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
 
   useEffect(() => {
     const fetchBids = async () => {
@@ -54,18 +62,25 @@ export default function AvailableBids() {
     fetchBids();
   }, [token, refresh]);
 
-  const handleSelectOffer = async (offerId: string) => {
+  const handleSelectOffer = async () => {
+    if (!selectedOfferId || !deliveryTime) return;
+
     try {
       await api.post(
-        `/supplier-offers/select/${offerId}`,
-        {},
+        `/supplier-offers/select/${selectedOfferId}`,
+        { deliveryTime },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert("Offer selected successfully!");
+
+      setToast({ message: "Offer selected successfully!", type: "success" });
       setRefresh(!refresh);
+      setShowModal(false);
+      setDeliveryTime("");
     } catch (error: any) {
-      console.error("Error selecting offer:", error);
-      alert(error.response?.data?.message || "Error selecting offer.");
+      setToast({
+        message: error.response?.data?.message || "Error selecting offer.",
+        type: "error",
+      });
     }
   };
 
@@ -89,6 +104,69 @@ export default function AvailableBids() {
 
   return (
     <div className="space-y-6">
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-bold text-[#1E3A8A] mb-4">
+              Select Delivery Time
+            </h3>
+            <input
+              type="text"
+              placeholder="Enter expected delivery time (e.g., '5 days')"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#059669] focus:border-[#059669] outline-none transition"
+              value={deliveryTime}
+              onChange={(e) => setDeliveryTime(e.target.value)}
+            />
+            <div className="mt-6 flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setShowModal(false);
+                  setDeliveryTime("");
+                }}
+                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSelectOffer}
+                className="px-4 py-2 bg-[#059669] text-white rounded-lg hover:bg-[#047857] transition-colors"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          className={`fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg flex items-center justify-between ${
+            toast.type === "success"
+              ? "bg-[#D1FAE5] text-[#059669]"
+              : "bg-[#FEE2E2] text-[#DC2626]"
+          }`}
+        >
+          <div className="flex items-center">
+            {toast.type === "success" ? (
+              <FiCheckCircle className="mr-2" />
+            ) : (
+              <FiAlertCircle className="mr-2" />
+            )}
+            <span>{toast.message}</span>
+          </div>
+          <button
+            onClick={() => setToast(null)}
+            className="ml-4 text-current hover:text-opacity-70"
+          >
+            <FiX />
+          </button>
+        </motion.div>
+      )}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <h1 className="text-2xl font-bold text-[#1E3A8A]">Available Bids</h1>
 
@@ -299,9 +377,10 @@ export default function AvailableBids() {
                                           <motion.button
                                             whileHover={{ scale: 1.05 }}
                                             whileTap={{ scale: 0.95 }}
-                                            onClick={() =>
-                                              handleSelectOffer(offer.id)
-                                            }
+                                            onClick={() => {
+                                              setSelectedOfferId(offer.id);
+                                              setShowModal(true);
+                                            }}
                                             className="px-3 py-1 bg-[#059669] text-white text-sm rounded-lg hover:bg-[#047857] transition-colors"
                                           >
                                             Select

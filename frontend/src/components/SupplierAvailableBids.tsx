@@ -101,7 +101,7 @@ const SupplierAvailableBids = () => {
         </header> */}
 
         {bids.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-8 text-center">
+          <div className="bg-white rounded-lg p-8 text-center">
             <div className="text-[#FBBF24] text-5xl mb-4">
               <FiPackage className="inline-block" />
             </div>

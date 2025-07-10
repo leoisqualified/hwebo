@@ -6,6 +6,7 @@ import {
   selectWinningOffer,
   getSchoolPayments,
   getAvailableBids,
+  getMyAwardedOffers
 } from "../controllers/supplierOfferController";
 import { authenticate } from "../middlewares/authenticate";
 import { validateRequest } from "../middlewares/validateRequest";
@@ -16,6 +17,7 @@ const router = Router();
 router.post("/", authenticate, validateRequest(submitOfferSchema), submitOffer);
 router.get("/available-bids", authenticate, getAvailableBids);
 router.get("/school-payments", authenticate, getSchoolPayments);
+router.get("/my-awarded-offers", authenticate, getMyAwardedOffers);
 router.post("/select/:offerId", authenticate, selectWinningOffer);
 router.get("/:bidItemId", authenticate, getOffersForBidItem);
 

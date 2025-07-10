@@ -86,7 +86,9 @@ const seedDatabase = async () => {
       bidItem: maizeItem,
       pricePerUnit: 50,
       notes: "Quality maize with timely delivery.",
-      status: "pending",
+      status: "accepted",
+      deliveryTime: "3 days",
+      totalPrice: 50 * 100,
     });
 
     const riceOffer = await AppDataSource.getRepository(SupplierOffer).save({
