@@ -129,8 +129,7 @@ export default function MyAwards() {
                       GH₵ {offer.totalPrice.toLocaleString()}
                     </p>
                     <p className="text-sm text-gray-500">
-                      {offer.bidItem.quantity} {offer.bidItem.unit} × GH₵{" "}
-                      {offer.pricePerUnit}
+                      {offer.bidItem.quantity} {offer.bidItem.unit}
                     </p>
                   </div>
                 </div>
@@ -169,13 +168,13 @@ export default function MyAwards() {
                 </div>
               </div>
 
-              {offer.notes && (
+              {/* {offer.notes && (
                 <div className="mt-4 p-3 bg-[#F3F4F6] rounded-lg">
                   <p className="text-sm text-gray-700">
                     <span className="font-medium">Notes:</span> {offer.notes}
                   </p>
                 </div>
-              )}
+              )} */}
             </div>
           </motion.div>
         ))}
