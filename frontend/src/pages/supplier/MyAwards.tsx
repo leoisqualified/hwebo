@@ -46,7 +46,7 @@ export default function MyAwards() {
   useEffect(() => {
     const fetchAwardedOffers = async () => {
       try {
-        const res = await api.get("/supplier/my-awarded-offers");
+        const res = await api.get("/supplier-offers/my-awarded-offers");
         setAwards(res.data.awardedOffers);
       } catch (err) {
         console.error("Failed to fetch awarded offers", err);
@@ -126,10 +126,10 @@ export default function MyAwards() {
                   </span>
                   <div className="mt-2 text-right">
                     <p className="text-lg font-bold text-[#1E3A8A]">
-                      KES {offer.totalPrice.toLocaleString()}
+                      GH₵ {offer.totalPrice.toLocaleString()}
                     </p>
                     <p className="text-sm text-gray-500">
-                      {offer.bidItem.quantity} {offer.bidItem.unit} × KES{" "}
+                      {offer.bidItem.quantity} {offer.bidItem.unit} × GH₵{" "}
                       {offer.pricePerUnit}
                     </p>
                   </div>
@@ -141,7 +141,7 @@ export default function MyAwards() {
                   <FiClock className="text-[#059669]" />
                   <div>
                     <p className="text-sm text-gray-500">Delivery Time</p>
-                    <p className="font-medium">{offer.deliveryTime}</p>
+                    <p className="font-medium">{offer.deliveryTime} days</p>
                   </div>
                 </div>
 

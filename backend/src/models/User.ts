@@ -10,7 +10,7 @@ import {
 } from "typeorm";
 import { BidRequest } from "./BidRequest";
 import { SupplierProfile } from "./SupplierProfile";
-import { nullable } from "zod";
+import { SupplierOffer } from "./SupplierOffer";
 
 @Entity()
 export class User {
@@ -43,4 +43,7 @@ export class User {
 
   @OneToMany(() => BidRequest, (bid) => bid.school)
   bidRequests!: BidRequest[];
+
+  @OneToMany(() => SupplierOffer, (offer) => offer.supplier)
+  offers!: SupplierOffer[];
 }

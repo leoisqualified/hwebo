@@ -141,10 +141,15 @@ export const selectWinningOffer = async (
       .execute();
 
     // Accept the selected offer
+    // console.log("Before update:", offer.status); // Should be "pending"
+
     offer.status = "accepted";
     offer.totalPrice = offer.pricePerUnit * offer.bidItem.quantity;
-    offer.deliveryTime = offer.deliveryTime ?? "3 days";
+    offer.deliveryTime = deliveryTime || "3";
+
     await offerRepo.save(offer);
+
+    // console.log("After update:", offer.status); // Should be "accepted"
 
     res.status(200).json({ message: "Offer selected successfully." });
   } catch (error) {
@@ -227,14 +232,23 @@ export const getMyAwardedOffers = async (
   try {
     const userId = (req as any).user.userId;
 
+    // console.log("This is the supplier id", userId);
+
     const awardedOffers = await offerRepo.find({
       where: {
         supplier: { id: userId },
         status: "accepted",
       },
-      relations: ["bidItem", "bidItem.bidRequest", "bidItem.bidRequest.school"],
+      relations: [
+        "supplier",
+        "bidItem",
+        "bidItem.bidRequest",
+        "bidItem.bidRequest.school",
+      ],
       order: { createdAt: "DESC" },
     });
+
+    // console.log("Found awarded offers:", awardedOffers.length);
 
     res.status(200).json({ awardedOffers });
   } catch (error) {

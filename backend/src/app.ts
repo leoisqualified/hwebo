@@ -32,6 +32,8 @@ app.use("/api/bid-requests", bidRequestRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 app.use("/api/supplier-offers", supplierOfferRoutes);
 
+
+
 // Global error handler
 app.use(errorHandler);
 

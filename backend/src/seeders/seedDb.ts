@@ -58,7 +58,7 @@ const seedDatabase = async () => {
       title: "Food Supply for Term 1",
       budget: "5000",
       description: "We need maize and rice for the upcoming term.",
-      deadline: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes from now
+      deadline: new Date(Date.now() + 2 * 60 * 1000), // 2 minutes from now
     });
 
     // 4. Create Bid Items

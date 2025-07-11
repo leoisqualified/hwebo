@@ -106,14 +106,14 @@ export default function AvailableBids() {
     <div className="space-y-6">
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-transparent border border-[#059669] rouned-md bg-opacity-70 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
             <h3 className="text-lg font-bold text-[#1E3A8A] mb-4">
               Select Delivery Time
             </h3>
             <input
               type="text"
-              placeholder="Enter expected delivery time (e.g., '5 days')"
+              placeholder="Enter expected delivery time"
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#059669] focus:border-[#059669] outline-none transition"
               value={deliveryTime}
               onChange={(e) => setDeliveryTime(e.target.value)}
@@ -347,7 +347,7 @@ export default function AvailableBids() {
                                           ).toFixed(2)}{" "}
                                           total
                                         </span>
-                                        <span>{offer.deliveryTime}</span>
+                                        <span>{offer.deliveryTime} days</span>
                                       </div>
                                       {offer.notes && (
                                         <p className="text-sm text-gray-500 mt-1">
