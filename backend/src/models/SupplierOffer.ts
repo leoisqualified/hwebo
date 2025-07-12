@@ -37,4 +37,7 @@ export class SupplierOffer {
 
   @Column({ type: "varchar", nullable: true })
   deliveryTime!: string;
+
+  @Column({ default: false })
+  paid!: boolean;
 }
