@@ -6,8 +6,9 @@ import {
   FiCheckCircle,
   FiClock,
   FiAward,
+  FiDollarSign,
+  FiCalendar,
 } from "react-icons/fi";
-import { FaSchool } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 interface AwardedOffer {
@@ -27,21 +28,36 @@ interface AwardedOffer {
       title: string;
       school: {
         name: string;
+        location: string;
       };
     };
   };
+  createdAt: string;
 }
 
-const statusColors = {
-  pending: "bg-[#FEF3C7] text-[#D97706]",
-  accepted: "bg-[#D1FAE5] text-[#059669]",
-  completed: "bg-[#DBEAFE] text-[#1E40AF]",
-  rejected: "bg-[#FEE2E2] text-[#DC2626]",
+const statusConfig = {
+  pending: {
+    color: "bg-amber-50 text-amber-800",
+    icon: <FiClock className="text-amber-500" />,
+  },
+  accepted: {
+    color: "bg-emerald-50 text-emerald-800",
+    icon: <FiCheckCircle className="text-emerald-500" />,
+  },
+  completed: {
+    color: "bg-blue-50 text-blue-800",
+    icon: <FiCheckCircle className="text-blue-500" />,
+  },
+  rejected: {
+    color: "bg-red-50 text-red-800",
+    icon: <FiCheckCircle className="text-red-500" />,
+  },
 };
 
 export default function MyAwards() {
   const [awards, setAwards] = useState<AwardedOffer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedFilter, setSelectedFilter] = useState<string>("all");
 
   useEffect(() => {
     const fetchAwardedOffers = async () => {
@@ -58,127 +74,214 @@ export default function MyAwards() {
     fetchAwardedOffers();
   }, []);
 
+  const filteredAwards =
+    selectedFilter === "all"
+      ? awards
+      : awards.filter((offer) => offer.status === selectedFilter);
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#059669]"></div>
-      </div>
-    );
-  }
-
-  if (awards.length === 0) {
-    return (
-      <div className="bg-white rounded-xl p-8 text-center max-w-2xl mx-auto">
-        <div className="text-[#FBBF24] text-5xl mb-4">
-          <FiAward className="inline-block" />
-        </div>
-        <h3 className="text-xl font-semibold text-[#1E3A8A] mb-2">
-          No awards yet
-        </h3>
-        <p className="text-[#1E3A8A]">
-          You haven't been awarded any bids yet. Keep submitting offers!
-        </p>
+        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-indigo-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-[#1E3A8A]">My Awarded Bids</h2>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-[#059669]">
+            Awarded Contracts
+          </h1>
+          <p className="text-gray-500 mt-1">
+            {awards.length} total contracts · {filteredAwards.length} filtered
+          </p>
+        </div>
+
+        <div className="flex space-x-2">
+          <button
+            onClick={() => setSelectedFilter("all")}
+            className={`px-3 py-1.5 rounded-md text-sm font-medium ${
+              selectedFilter === "all"
+                ? "bg-indigo-600 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            All
+          </button>
+          {Object.entries(statusConfig).map(([status, config]) => (
+            <button
+              key={status}
+              onClick={() => setSelectedFilter(status)}
+              className={`px-3 py-1.5 rounded-md text-sm font-medium flex items-center gap-1 ${
+                selectedFilter === status
+                  ? `${config.color
+                      .replace("bg-", "bg-")
+                      .replace("text-", "text-gray bg-")}`
+                  : "bg-white text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              {config.icon}
+              {status.charAt(0).toUpperCase() + status.slice(1)}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="space-y-4">
-        {awards.map((offer) => (
-          <motion.div
-            key={offer.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            whileHover={{ scale: 1.01 }}
-            className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200"
-          >
-            <div className="p-6">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <FiPackage className="text-[#FBBF24]" />
-                    <h3 className="text-lg font-semibold text-[#1E3A8A]">
-                      {offer.bidItem.itemName}
-                    </h3>
+      {filteredAwards.length === 0 ? (
+        <div className="bg-white rounded-xl shadow-sm p-8 text-center border border-gray-200">
+          <div className="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-indigo-50 mb-4">
+            <FiAward className="h-8 w-8 text-[#059669]" />
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-1">
+            No contracts found
+          </h3>
+          <p className="text-gray-500 max-w-md mx-auto">
+            {selectedFilter === "all"
+              ? "You haven't been awarded any contracts yet."
+              : `You don't have any ${selectedFilter} contracts.`}
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-5">
+          {filteredAwards.map((offer) => (
+            <motion.div
+              key={offer.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white overflow-hidden rounded-xl shadow-sm border border-gray-200"
+            >
+              <div className="p-6">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+                  <div className="flex-1">
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0 h-12 w-12 rounded-lg bg-indigo-50 flex items-center justify-center">
+                      <FiPackage className="h-5 w-5 text-[#FFD700]" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          {offer.bidItem.itemName}
+                        </h3>
+                        <p className="text-gray-600 mt-1">
+                          {offer.bidItem.bidRequest.title}
+                        </p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            {offer.bidItem.quantity} {offer.bidItem.unit}
+                          </span>
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            {offer.bidItem.bidRequest.school.name}
+                          </span>
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            {offer.bidItem.bidRequest.school.location}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-gray-700">
-                    {offer.bidItem.bidRequest.title}
-                  </p>
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <FaSchool className="text-[#059669]" />
-                    <span>{offer.bidItem.bidRequest.school.name}</span>
+
+                  <div className="flex flex-col items-end">
+                    <div
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                        statusConfig[offer.status].color
+                      }`}
+                    >
+                      {statusConfig[offer.status].icon}
+                      <span className="ml-1.5">
+                        {offer.status.charAt(0).toUpperCase() +
+                          offer.status.slice(1)}
+                      </span>
+                    </div>
+                    <div className="mt-4 text-right">
+                      <p className="text-2xl font-bold text-gray-900">
+                        GH₵ {offer.totalPrice.toLocaleString()}
+                      </p>
+                      <p className="text-sm text-gray-500 mt-1">
+                        {offer.pricePerUnit.toLocaleString()} per unit
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col items-end">
-                  <span
-                    className={`px-3 py-1 text-xs font-medium rounded-full ${
-                      statusColors[offer.status]
-                    }`}
-                  >
-                    {offer.status.charAt(0).toUpperCase() +
-                      offer.status.slice(1)}
-                  </span>
-                  <div className="mt-2 text-right">
-                    <p className="text-lg font-bold text-[#1E3A8A]">
-                      GH₵ {offer.totalPrice.toLocaleString()}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {offer.bidItem.quantity} {offer.bidItem.unit}
-                    </p>
-                  </div>
-                </div>
-              </div>
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-blue-50 flex items-center justify-center">
+                        <FiCalendar className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Date Awarded
+                        </p>
+                        <p className="text-sm font-medium text-gray-900">
+                          {formatDate(offer.createdAt)}
+                        </p>
+                      </div>
+                    </div>
 
-              <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-center gap-2">
-                  <FiClock className="text-[#059669]" />
-                  <div>
-                    <p className="text-sm text-gray-500">Delivery Time</p>
-                    <p className="font-medium">{offer.deliveryTime} days</p>
-                  </div>
-                </div>
+                    <div className="flex items-center gap-3">
+                      <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-amber-50 flex items-center justify-center">
+                        <FiClock className="h-5 w-5 text-amber-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Delivery Time
+                        </p>
+                        <p className="text-sm font-medium text-gray-900">
+                          {offer.deliveryTime} days
+                        </p>
+                      </div>
+                    </div>
 
-                <div className="flex items-center gap-2">
-                  <FiCheckCircle className="text-[#059669]" />
-                  <div>
-                    <p className="text-sm text-gray-500">Status</p>
-                    <p className="font-medium capitalize">{offer.status}</p>
-                  </div>
-                </div>
+                    <div className="flex items-center gap-3">
+                      <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-emerald-50 flex items-center justify-center">
+                        <FiDollarSign className="h-5 w-5 text-emerald-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Total Value
+                        </p>
+                        <p className="text-sm font-medium text-gray-900">
+                          GH₵ {offer.totalPrice.toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
 
-                <div className="flex items-center gap-2">
-                  <FiTruck className="text-[#059669]" />
-                  <div>
-                    <p className="text-sm text-gray-500">Actions</p>
-                    <div className="flex gap-2">
-                      <button className="text-sm text-[#059669] hover:text-[#047857]">
-                        Update Status
-                      </button>
-                      <button className="text-sm text-[#1E3A8A] hover:text-[#1E3A8A]/80">
-                        View Details
-                      </button>
+                    <div className="flex items-center gap-3">
+                      <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-indigo-50 flex items-center justify-center">
+                        <FiTruck className="h-5 w-5 text-indigo-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Actions
+                        </p>
+                        <div className="flex gap-2">
+                          <button className="text-sm font-medium text-indigo-600 hover:text-indigo-800">
+                            Update
+                          </button>
+                          <button className="text-sm font-medium text-gray-600 hover:text-gray-800">
+                            Details
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-
-              {/* {offer.notes && (
-                <div className="mt-4 p-3 bg-[#F3F4F6] rounded-lg">
-                  <p className="text-sm text-gray-700">
-                    <span className="font-medium">Notes:</span> {offer.notes}
-                  </p>
-                </div>
-              )} */}
-            </div>
-          </motion.div>
-        ))}
-      </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

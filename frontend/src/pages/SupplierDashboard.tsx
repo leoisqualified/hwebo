@@ -33,7 +33,7 @@ export default function SupplierDashboard() {
         className="w-64 bg-white border-r border-gray-200 p-5 flex flex-col"
       >
         <div className="flex items-center space-x-3 mb-8 pt-2">
-          <div className="h-9 w-9 rounded-full bg-indigo-600 flex items-center justify-center text-white font-medium">
+          <div className="h-9 w-9 rounded-full bg-[#059669] flex items-center justify-center text-white font-medium">
             <svg
               className="w-5 h-5"
               fill="none"
@@ -151,7 +151,7 @@ export default function SupplierDashboard() {
       <main className="flex-1 p-6">
         <div className="bg-white rounded-lg border border-gray-200 p-6 min-h-[calc(100vh-3rem)]">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-xl font-semibold text-gray-800">
+            <h1 className="text-xl font-semibold text-[#059669]">
               {currentTab}
             </h1>
 
@@ -196,7 +196,7 @@ export default function SupplierDashboard() {
               </button>
 
               <div className="flex items-center space-x-2">
-                <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-medium">
+                <div className="h-8 w-8 rounded-full bg-[#059669] flex items-center justify-center text-white font-medium">
                   S
                 </div>
                 <span className="text-sm font-medium">Supplier</span>
