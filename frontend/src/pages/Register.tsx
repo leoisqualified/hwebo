@@ -224,36 +224,15 @@ export default function Register() {
             </form>
 
             <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200"></div>
-              </div>
-              <div className="relative flex justify-center text-xs">
-                <span className="px-2 bg-white text-gray-500">
-                  Already registered?
-                </span>
-              </div>
-            </div>
-
-            <div className="text-center">
-              <a
-                href="/"
-                className="text-[#059669] hover:text-[#059669] text-sm inline-flex items-center justify-center w-full"
-              >
-                <svg
-                  className="w-4 h-4 mr-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+              <div className="text-center text-xs text-gray-500">
+                Already have and account?{" "}
+                <a
+                  href="/"
+                  className="text-[#059669] hover:text-[#059669] font-medium"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1.5"
-                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                  />
-                </svg>
-                Back to login
-              </a>
+                  Login
+                </a>
+              </div>
             </div>
           </div>
         </div>

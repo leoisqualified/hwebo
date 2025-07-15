@@ -26,7 +26,7 @@ export default function SupplierKYC() {
 
   useEffect(() => {
     if (user?.verified) {
-      navigate("/supplier/dashboard"); // Redirect to dashboard if verified
+      navigate("/supplier/dashboard");
     }
   }, [user?.verified, navigate]);
 
@@ -49,8 +49,6 @@ export default function SupplierKYC() {
     formData.append("fdaLicense", fdaLicenseFile);
     formData.append("registrationCertificate", registrationCertificateFile);
     formData.append("ownerId", ownerIdFile);
-
-    // Append the form text fields
     formData.append("businessName", businessName);
     formData.append("registrationNumber", registrationNumber);
     formData.append("taxId", taxId);
@@ -71,16 +69,10 @@ export default function SupplierKYC() {
       setSuccessMessage(
         "KYC documents uploaded successfully. Awaiting verification."
       );
-
-      // Update local state to reflect submission immediately
       setKycSubmitted(true);
-
-      // Clear file inputs
       setFdaLicenseFile(null);
       setRegistrationCertificateFile(null);
       setOwnerIdFile(null);
-
-      // Optionally refresh user data from backend
       fetchUser();
     } catch (error: any) {
       setErrorMessage(
@@ -92,32 +84,30 @@ export default function SupplierKYC() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F3F4F6] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl shadow-sm w-full max-w-md overflow-hidden"
+        className="bg-white rounded-lg border border-gray-200 shadow-sm w-full max-w-md overflow-hidden"
       >
-        {/* Header with gradient accent */}
-        <div className="h-2 bg-gradient-to-r from-[#059669] to-[#FBBF24]"></div>
+        {/* Header with subtle border */}
+        <div className="border-b border-gray-200 px-6 py-4">
+          <h1 className="text-xl font-semibold text-gray-800">
+            KYC Verification
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">
+            {user?.verified
+              ? "Your KYC verification is complete."
+              : "Upload your documents to complete verification."}
+          </p>
+        </div>
 
-        <div className="p-8">
-          <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold text-[#1E3A8A]">
-              KYC Verification
-            </h1>
-            <p className="text-gray-500 mt-2">
-              {user?.verified
-                ? "Your KYC verification is complete."
-                : "Upload your documents to complete verification."}
-            </p>
-          </div>
-
+        <div className="p-6">
           {user?.verified ? (
-            <div className="text-center py-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#D1FAE5] rounded-full mb-4">
+            <div className="text-center py-4">
+              <div className="inline-flex items-center justify-center w-14 h-14 bg-green-50 rounded-full mb-3">
                 <svg
-                  className="w-8 h-8 text-[#059669]"
+                  className="w-6 h-6 text-green-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -125,7 +115,7 @@ export default function SupplierKYC() {
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
+                    strokeWidth="1.5"
                     d="M5 13l4 4L19 7"
                   />
                 </svg>
@@ -133,15 +123,15 @@ export default function SupplierKYC() {
               <h3 className="text-lg font-medium text-gray-900">
                 Verified Successfully
               </h3>
-              <p className="text-gray-500 mt-1">
+              <p className="text-gray-500 text-sm mt-1">
                 Your account is fully verified.
               </p>
             </div>
           ) : kycSubmitted ? (
-            <div className="text-center py-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-[#FEF3C7] rounded-full mb-4">
+            <div className="text-center py-4">
+              <div className="inline-flex items-center justify-center w-14 h-14 bg-yellow-50 rounded-full mb-3">
                 <svg
-                  className="w-8 h-8 text-[#D97706]"
+                  className="w-6 h-6 text-yellow-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -149,7 +139,7 @@ export default function SupplierKYC() {
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
+                    strokeWidth="1.5"
                     d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"
                   />
                 </svg>
@@ -157,15 +147,14 @@ export default function SupplierKYC() {
               <h3 className="text-lg font-medium text-gray-900">
                 Verification Pending
               </h3>
-              <p className="text-gray-500 mt-1">
+              <p className="text-gray-500 text-sm mt-1">
                 Your documents have been submitted and are under review.
               </p>
             </div>
           ) : (
             <>
               {/* Text Inputs */}
-              <div className="space-y-4">
-                {/* Business Name */}
+              <div className="space-y-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Business Name *
@@ -175,12 +164,11 @@ export default function SupplierKYC() {
                     placeholder="Enter your business name"
                     value={businessName}
                     onChange={(e) => setBusinessName(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#059669] focus:border-[#059669] outline-none transition"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                     required
                   />
                 </div>
 
-                {/* Registration Number */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Registration Number *
@@ -190,12 +178,11 @@ export default function SupplierKYC() {
                     placeholder="Enter registration number"
                     value={registrationNumber}
                     onChange={(e) => setRegistrationNumber(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#059669] focus:border-[#059669] outline-none transition"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                     required
                   />
                 </div>
 
-                {/* Tax ID */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Tax ID *
@@ -205,12 +192,11 @@ export default function SupplierKYC() {
                     placeholder="Enter tax identification number"
                     value={taxId}
                     onChange={(e) => setTaxId(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#059669] focus:border-[#059669] outline-none transition"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                     required
                   />
                 </div>
 
-                {/* Contact Person */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Contact Person *
@@ -220,12 +206,11 @@ export default function SupplierKYC() {
                     placeholder="Full name of contact person"
                     value={contactPerson}
                     onChange={(e) => setContactPerson(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#059669] focus:border-[#059669] outline-none transition"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                     required
                   />
                 </div>
 
-                {/* Phone Number */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Phone Number *
@@ -235,12 +220,11 @@ export default function SupplierKYC() {
                     placeholder="Enter phone number"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#059669] focus:border-[#059669] outline-none transition"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                     required
                   />
                 </div>
 
-                {/* Mobile Money Number */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Mobile Money Number
@@ -250,11 +234,10 @@ export default function SupplierKYC() {
                     placeholder="Enter mobile money number"
                     value={momoNumber}
                     onChange={(e) => setMomoNumber(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#059669] focus:border-[#059669] outline-none transition"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                   />
                 </div>
 
-                {/* Bank Account */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Bank Account
@@ -264,207 +247,182 @@ export default function SupplierKYC() {
                     placeholder="Enter bank account details"
                     value={bankAccount}
                     onChange={(e) => setBankAccount(e.target.value)}
-                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#059669] focus:border-[#059669] outline-none transition"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                   />
                 </div>
               </div>
+
               {/* File Inputs */}
-              <div className="space-y-4">
-                <div className="p-4">
-                  <div className="flex flex-nowrap overflow-x-auto gap-3 pb-2">
-                    {" "}
-                    {/* Changed to flex-nowrap with horizontal scroll */}
-                    {/* FDA License - Updated smaller card */}
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-3 flex-shrink-0 w-[180px]">
-                      {" "}
-                      {/* Fixed width and reduced padding */}
-                      <div className="flex flex-col items-center justify-center text-center h-full space-y-1">
-                        {" "}
-                        {/* Reduced spacing */}
-                        <svg
-                          className="w-6 h-6 text-gray-400"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                          />
-                        </svg>
-                        <h3 className="text-xs font-medium text-gray-700">
-                          FDA License
-                        </h3>{" "}
-                        {/* Smaller text */}
-                        <p className="text-[10px] text-gray-500">
-                          (PDF, JPG, PNG)
-                        </p>{" "}
-                        {/* Smaller text */}
-                        <label className="cursor-pointer mt-1">
-                          {" "}
-                          {/* Reduced margin */}
-                          <span className="px-2 py-1 bg-[#F3F4F6] text-[#1E3A8A] rounded-lg font-medium hover:bg-[#E5E7EB] transition-colors text-xs">
-                            Select
+              <div className="mt-4">
+                <h3 className="text-sm font-medium text-gray-700 mb-2">
+                  Required Documents *
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {/* FDA License */}
+                  <div className="border border-dashed border-gray-300 rounded-md p-3">
+                    <div className="flex flex-col items-center text-center space-y-1">
+                      <svg
+                        className="w-5 h-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1.5"
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                        />
+                      </svg>
+                      <h3 className="text-xs font-medium text-gray-700">
+                        FDA License
+                      </h3>
+                      <label className="cursor-pointer">
+                        <span className="px-2 py-1 bg-gray-50 text-indigo-600 rounded-md font-medium hover:bg-gray-100 transition-colors text-xs">
+                          Select
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) =>
+                            handleFileChange(e, setFdaLicenseFile)
+                          }
+                          className="hidden"
+                        />
+                      </label>
+                      {fdaLicenseFile && (
+                        <div className="mt-1 flex items-center space-x-1 bg-gray-50 p-1 rounded-md w-full">
+                          <svg
+                            className="w-3 h-3 text-green-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="1.5"
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            />
+                          </svg>
+                          <span className="text-[10px] text-gray-700 truncate">
+                            {fdaLicenseFile.name}
                           </span>
-                          <input
-                            type="file"
-                            accept=".pdf,.jpg,.jpeg,.png"
-                            onChange={(e) =>
-                              handleFileChange(e, setFdaLicenseFile)
-                            }
-                            className="hidden"
-                          />
-                        </label>
-                        {fdaLicenseFile && (
-                          <div className="mt-1 flex items-center space-x-1 bg-gray-50 p-1 rounded-lg w-full">
-                            {" "}
-                            {/* Smaller spacing */}
-                            <svg
-                              className="w-3 h-3 text-[#059669]"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                              />
-                            </svg>
-                            <span className="text-[10px] text-gray-700 truncate">
-                              {fdaLicenseFile.name}
-                            </span>{" "}
-                            {/* Smaller text */}
-                          </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
-                    {/* Registration Certificate - Same updates */}
-                    {/* Registration Certificate Upload */}
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-3 flex-shrink-0 w-[180px]">
-                      <div className="flex flex-col items-center justify-center text-center h-full space-y-1">
-                        <svg
-                          className="w-6 h-6 text-gray-400"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                          />
-                        </svg>
-                        <h3 className="text-xs font-medium text-gray-700">
-                          Registration Certificate
-                        </h3>
-                        <p className="text-[10px] text-gray-500">
-                          (PDF, JPG, PNG)
-                        </p>
-                        <label className="cursor-pointer mt-1">
-                          <span className="px-2 py-1 bg-[#F3F4F6] text-[#1E3A8A] rounded-lg font-medium hover:bg-[#E5E7EB] transition-colors text-xs">
-                            Select
+                  </div>
+
+                  {/* Registration Certificate */}
+                  <div className="border border-dashed border-gray-300 rounded-md p-3">
+                    <div className="flex flex-col items-center text-center space-y-1">
+                      <svg
+                        className="w-5 h-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1.5"
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                        />
+                      </svg>
+                      <h3 className="text-xs font-medium text-gray-700">
+                        Registration Certificate
+                      </h3>
+                      <label className="cursor-pointer">
+                        <span className="px-2 py-1 bg-gray-50 text-indigo-600 rounded-md font-medium hover:bg-gray-100 transition-colors text-xs">
+                          Select
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) =>
+                            handleFileChange(e, setRegistrationCertificateFile)
+                          }
+                          className="hidden"
+                        />
+                      </label>
+                      {registrationCertificateFile && (
+                        <div className="mt-1 flex items-center space-x-1 bg-gray-50 p-1 rounded-md w-full">
+                          <svg
+                            className="w-3 h-3 text-green-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="1.5"
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            />
+                          </svg>
+                          <span className="text-[10px] text-gray-700 truncate">
+                            {registrationCertificateFile.name}
                           </span>
-                          <input
-                            type="file"
-                            accept=".pdf,.jpg,.jpeg,.png"
-                            onChange={(e) =>
-                              handleFileChange(
-                                e,
-                                setRegistrationCertificateFile
-                              )
-                            }
-                            className="hidden"
-                          />
-                        </label>
-                        {registrationCertificateFile && (
-                          <div className="mt-1 flex items-center space-x-1 bg-gray-50 p-1 rounded-lg w-full">
-                            <svg
-                              className="w-3 h-3 text-[#059669]"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                              />
-                            </svg>
-                            <span className="text-[10px] text-gray-700 truncate">
-                              {registrationCertificateFile.name}
-                            </span>
-                          </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
-                    {/* Owner ID - Same updates */}
-                    {/* Owner ID Upload */}
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-3 flex-shrink-0 w-[180px]">
-                      <div className="flex flex-col items-center justify-center text-center h-full space-y-1">
-                        <svg
-                          className="w-6 h-6 text-gray-400"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                          />
-                        </svg>
-                        <h3 className="text-xs font-medium text-gray-700">
-                          Owner ID
-                        </h3>
-                        <p className="text-[10px] text-gray-500">
-                          (PDF, JPG, PNG)
-                        </p>
-                        <label className="cursor-pointer mt-1">
-                          <span className="px-2 py-1 bg-[#F3F4F6] text-[#1E3A8A] rounded-lg font-medium hover:bg-[#E5E7EB] transition-colors text-xs">
-                            Select
+                  </div>
+
+                  {/* Owner ID */}
+                  <div className="border border-dashed border-gray-300 rounded-md p-3">
+                    <div className="flex flex-col items-center text-center space-y-1">
+                      <svg
+                        className="w-5 h-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1.5"
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                        />
+                      </svg>
+                      <h3 className="text-xs font-medium text-gray-700">
+                        Owner ID
+                      </h3>
+                      <label className="cursor-pointer">
+                        <span className="px-2 py-1 bg-gray-50 text-indigo-600 rounded-md font-medium hover:bg-gray-100 transition-colors text-xs">
+                          Select
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) => handleFileChange(e, setOwnerIdFile)}
+                          className="hidden"
+                        />
+                      </label>
+                      {ownerIdFile && (
+                        <div className="mt-1 flex items-center space-x-1 bg-gray-50 p-1 rounded-md w-full">
+                          <svg
+                            className="w-3 h-3 text-green-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="1.5"
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            />
+                          </svg>
+                          <span className="text-[10px] text-gray-700 truncate">
+                            {ownerIdFile.name}
                           </span>
-                          <input
-                            type="file"
-                            accept=".pdf,.jpg,.jpeg,.png"
-                            onChange={(e) =>
-                              handleFileChange(e, setOwnerIdFile)
-                            }
-                            className="hidden"
-                          />
-                        </label>
-                        {ownerIdFile && (
-                          <div className="mt-1 flex items-center space-x-1 bg-gray-50 p-1 rounded-lg w-full">
-                            <svg
-                              className="w-3 h-3 text-[#059669]"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                              />
-                            </svg>
-                            <span className="text-[10px] text-gray-700 truncate">
-                              {ownerIdFile.name}
-                            </span>
-                          </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
 
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 mt-3">
                   <p>Accepted documents:</p>
                   <ul className="list-disc list-inside mt-1">
                     <li>Government-issued ID</li>
@@ -475,16 +433,10 @@ export default function SupplierKYC() {
               </div>
 
               <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
                 onClick={handleUpload}
                 disabled={
-                  uploading ||
-                  !fdaLicenseFile ||
-                  !registrationCertificateFile ||
-                  !ownerIdFile
-                }
-                className={`mt-6 w-full py-3 rounded-xl font-medium transition-colors ${
                   uploading ||
                   !fdaLicenseFile ||
                   !registrationCertificateFile ||
@@ -493,11 +445,20 @@ export default function SupplierKYC() {
                   !registrationNumber ||
                   !taxId ||
                   !contactPerson ||
-                  !phoneNumber ||
-                  !momoNumber ||
-                  !bankAccount
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-[#059669] text-white hover:bg-[#047857]"
+                  !phoneNumber
+                }
+                className={`mt-6 w-full py-2.5 rounded-md font-medium transition-colors text-sm ${
+                  uploading ||
+                  !fdaLicenseFile ||
+                  !registrationCertificateFile ||
+                  !ownerIdFile ||
+                  !businessName ||
+                  !registrationNumber ||
+                  !taxId ||
+                  !contactPerson ||
+                  !phoneNumber
+                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                    : "bg-indigo-600 text-white hover:bg-indigo-700"
                 }`}
               >
                 {uploading ? (
@@ -532,12 +493,12 @@ export default function SupplierKYC() {
           )}
 
           {successMessage && (
-            <div className="mt-4 p-3 bg-[#D1FAE5] text-[#059669] rounded-lg text-sm">
+            <div className="mt-4 p-3 bg-green-50 text-green-700 rounded-md text-sm">
               {successMessage}
             </div>
           )}
           {errorMessage && (
-            <div className="mt-4 p-3 bg-[#FEE2E2] text-[#DC2626] rounded-lg text-sm">
+            <div className="mt-4 p-3 bg-red-50 text-red-700 rounded-md text-sm">
               {errorMessage}
             </div>
           )}
