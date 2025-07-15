@@ -28,7 +28,7 @@ export default function SchoolDashboard() {
         className="w-64 bg-white border-r border-gray-200 p-5 flex flex-col"
       >
         <div className="flex items-center space-x-3 mb-8 pt-2">
-          <div className="h-9 w-9 rounded-full bg-indigo-600 flex items-center justify-center text-white font-medium">
+          <div className="h-9 w-9 rounded-full bg-[#059669] flex items-center justify-center text-white font-medium">
             <svg
               className="w-5 h-5"
               fill="none"
@@ -44,8 +44,8 @@ export default function SchoolDashboard() {
             </svg>
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-gray-800">HyɛBɔ</h2>
-            <p className="text-gray-500 text-xs">School Portal</p>
+            <h2 className="text-lg font-semibold text-gray-800">School Portal</h2>
+            <p className="text-gray-500 text-xs">Welcome Back!</p>
           </div>
         </div>
 

@@ -62,7 +62,7 @@ export default function PostBid() {
         className="bg-white  p-8 "
       >
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-[#1E3A8A]">Create New Bid</h1>
+          <h1 className="text-2xl font-bold text-[#059669]">Create New Bid</h1>
           <p className="text-gray-500">
             Fill in the details below to post a new procurement request
           </p>
@@ -112,7 +112,7 @@ export default function PostBid() {
           </div>
 
           <div className="border-t border-gray-200 pt-6">
-            <h2 className="text-lg font-bold text-[#1E3A8A] mb-4">Bid Items</h2>
+            <h2 className="text-lg font-bold text-[#059669] mb-4">Bid Items</h2>
 
             <div className="space-y-4">
               {items.map((item, index) => (
@@ -266,7 +266,7 @@ export default function PostBid() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               disabled={isSubmitting}
-              className={`px-6 py-3 bg-[#059669] text-white rounded-xl hover:bg-[#047857] transition-colors ${
+              className={`px-6 py-3 bg-[#059669] text-white rounded-xl hover:bg-[#047857] transition-colors hover:cursor-pointer ${
                 isSubmitting ? "opacity-70 cursor-not-allowed" : ""
               }`}
             >
