@@ -30,8 +30,6 @@ export default function Register() {
         message: "Registration successful! Please login.",
         type: "success",
       });
-
-      // Redirect to login after a brief delay to show the message
       setTimeout(() => navigate("/"), 2000);
     } catch (error: any) {
       setNotification({
@@ -42,32 +40,87 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F3F4F6] to-[#E5E7EB] p-4">
+    <div className="min-h-screen flex items-center justify-center bg-white-50 p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-          {/* Decorative header strip */}
-          <div className="h-2 bg-gradient-to-r from-[#059669] to-[#FBBF24]"></div>
-
+        <div className="bg-white rounded-lg overflow-hidden">
           <div className="p-8 space-y-6">
             <div className="text-center">
-              <h1 className="text-3xl font-bold text-[#1E3A8A]">Join HyɛBɔ</h1>
-              <p className="text-gray-500 mt-2">Create your account</p>
+              <div className="flex justify-center mb-4">
+                <svg
+                  className="w-10 h-10 text-[#059669]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.5"
+                    d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"
+                  />
+                </svg>
+              </div>
+              <h1 className="text-2xl font-semibold text-gray-800">
+                Join HyɛBɔ
+              </h1>
+              <p className="text-gray-500 mt-1 text-sm">Create your account</p>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            {notification && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className={`p-3 rounded-md ${
+                  notification.type === "success"
+                    ? "bg-green-50 text-green-700"
+                    : "bg-red-50 text-red-700"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    {notification.type === "success" ? (
+                      <svg
+                        className="h-5 w-5 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1.5"
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        className="h-5 w-5 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1.5"
+                          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    )}
+                    <span className="text-sm">{notification.message}</span>
+                  </div>
+                  <button
+                    onClick={() => setNotification(null)}
+                    className="text-current hover:text-opacity-70"
+                  >
                     <svg
-                      className="h-5 w-5 text-gray-400"
+                      className="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -75,19 +128,27 @@ export default function Register() {
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
                       />
                     </svg>
-                  </div>
-                  <input
-                    {...register("name", { required: "Name is required" })}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#059669] focus:border-[#059669] outline-none transition placeholder-gray-400"
-                    placeholder="John Doe"
-                  />
+                  </button>
                 </div>
+              </motion.div>
+            )}
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Full Name
+                </label>
+                <input
+                  {...register("name", { required: "Name is required" })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#059669] focus:border-[#059669] transition placeholder-gray-400 text-sm"
+                  placeholder="John Doe"
+                />
                 {errors.name && (
-                  <p className="mt-1 text-sm text-[#DC2626]">
+                  <p className="mt-1 text-xs text-red-600">
                     {errors.name.message}
                   </p>
                 )}
@@ -97,31 +158,14 @@ export default function Register() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Email Address
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg
-                      className="h-5 w-5 text-gray-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                      />
-                    </svg>
-                  </div>
-                  <input
-                    type="email"
-                    {...register("email", { required: "Email is required" })}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#059669] focus:border-[#059669] outline-none transition placeholder-gray-400"
-                    placeholder="you@example.com"
-                  />
-                </div>
+                <input
+                  type="email"
+                  {...register("email", { required: "Email is required" })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#059669] focus:border-[#059669] transition placeholder-gray-400 text-sm"
+                  placeholder="you@example.com"
+                />
                 {errors.email && (
-                  <p className="mt-1 text-sm text-[#DC2626]">
+                  <p className="mt-1 text-xs text-red-600">
                     {errors.email.message}
                   </p>
                 )}
@@ -131,37 +175,20 @@ export default function Register() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Password
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg
-                      className="h-5 w-5 text-gray-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                      />
-                    </svg>
-                  </div>
-                  <input
-                    type="password"
-                    {...register("password", {
-                      required: "Password is required",
-                      minLength: {
-                        value: 6,
-                        message: "Password must be at least 6 characters",
-                      },
-                    })}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#059669] focus:border-[#059669] outline-none transition placeholder-gray-400"
-                    placeholder="••••••••"
-                  />
-                </div>
+                <input
+                  type="password"
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                  })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#059669] focus:border-[#059669] transition placeholder-gray-400 text-sm"
+                  placeholder="••••••••"
+                />
                 {errors.password && (
-                  <p className="mt-1 text-sm text-[#DC2626]">
+                  <p className="mt-1 text-xs text-red-600">
                     {errors.password.message}
                   </p>
                 )}
@@ -171,112 +198,26 @@ export default function Register() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Account Type
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg
-                      className="h-5 w-5 text-gray-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                      />
-                    </svg>
-                  </div>
-                  <select
-                    {...register("role", { required: "Role is required" })}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#059669] focus:border-[#059669] outline-none transition appearance-none bg-white"
-                  >
-                    <option value="">Select account type</option>
-                    <option value="school">School</option>
-                    <option value="supplier">Supplier</option>
-                  </select>
-                </div>
+                <select
+                  {...register("role", { required: "Role is required" })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#059669] focus:border-[#059669] transition appearance-none bg-white text-sm"
+                >
+                  <option value="">Select account type</option>
+                  <option value="school">School</option>
+                  <option value="supplier">Supplier</option>
+                </select>
                 {errors.role && (
-                  <p className="mt-1 text-sm text-[#DC2626]">
+                  <p className="mt-1 text-xs text-red-600">
                     {errors.role.message}
                   </p>
                 )}
               </div>
 
-              {/* Notification area */}
-              {notification && (
-                <motion.div
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className={`px-4 py-3 rounded-md mx-4 my-2 ${
-                    notification.type === "success"
-                      ? "bg-[#D1FAE5] text-[#059669]"
-                      : "bg-[#FEE2E2] text-[#DC2626]"
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      {notification.type === "success" ? (
-                        <svg
-                          className="h-5 w-5 mr-2"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                      ) : (
-                        <svg
-                          className="h-5 w-5 mr-2"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                      )}
-                      <span className="font-medium">
-                        {notification.message}
-                      </span>
-                    </div>
-                    <button
-                      onClick={() => setNotification(null)}
-                      className="ml-2 text-current hover:text-opacity-70"
-                    >
-                      <svg
-                        className="h-5 w-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-
               <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
                 type="submit"
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-[#059669] hover:bg-[#047857] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#059669] transition-colors"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#059669] hover:bg-[#059669] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#059669] transition-colors"
               >
                 Create Account
               </motion.button>
@@ -284,9 +225,9 @@ export default function Register() {
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
+                <div className="w-full border-t border-gray-200"></div>
               </div>
-              <div className="relative flex justify-center text-sm">
+              <div className="relative flex justify-center text-xs">
                 <span className="px-2 bg-white text-gray-500">
                   Already registered?
                 </span>
@@ -296,7 +237,7 @@ export default function Register() {
             <div className="text-center">
               <a
                 href="/"
-                className="font-medium text-[#059669] hover:text-[#047857] transition-colors text-sm inline-flex items-center"
+                className="text-[#059669] hover:text-[#059669] text-sm inline-flex items-center justify-center w-full"
               >
                 <svg
                   className="w-4 h-4 mr-1"
@@ -307,7 +248,7 @@ export default function Register() {
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
+                    strokeWidth="1.5"
                     d="M10 19l-7-7m0 0l7-7m-7 7h18"
                   />
                 </svg>
