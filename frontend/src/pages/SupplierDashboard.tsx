@@ -79,7 +79,7 @@ export default function SupplierDashboard() {
             </NavLink>
           </motion.div>
 
-          <motion.div whileHover={{ x: 3 }}>
+          {/* <motion.div whileHover={{ x: 3 }}>
             <NavLink
               to="/supplier/dashboard/my-offers"
               className={({ isActive }) => navLinkClass(isActive)}
@@ -99,7 +99,7 @@ export default function SupplierDashboard() {
               </svg>
               <span>My Offers</span>
             </NavLink>
-          </motion.div>
+          </motion.div> */}
 
           <motion.div whileHover={{ x: 3 }}>
             <NavLink
