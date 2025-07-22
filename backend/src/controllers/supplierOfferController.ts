@@ -207,7 +207,6 @@ export const getSchoolPayments = async (
   }
 };
 
-
 export const getAvailableBids = async (
   req: Request,
   res: Response,
@@ -269,6 +268,7 @@ export const getMyAwardedOffers = async (
         "bidItem",
         "bidItem.bidRequest",
         "bidItem.bidRequest.school",
+        "delivery",
       ],
       order: { createdAt: "DESC" },
     });

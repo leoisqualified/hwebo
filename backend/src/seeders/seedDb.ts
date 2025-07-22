@@ -118,7 +118,7 @@ const seedDatabase = async () => {
         pricePerUnit: 50.0,
         notes: "Quality maize with timely delivery.",
         status: "accepted",
-        deliveryTime: "3 days",
+        deliveryTime: "3",
         totalPrice: 50.0 * 100,
         paid: false,
       })
@@ -131,6 +131,8 @@ const seedDatabase = async () => {
         pricePerUnit: 70.0,
         notes: "Premium long grain rice.",
         status: "pending",
+        deliveryTime: "3",
+        totalPrice: 70.0 * 50,
         paid: false,
       })
     );
