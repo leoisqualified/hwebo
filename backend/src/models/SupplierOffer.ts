@@ -4,10 +4,12 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
+  OneToOne,
   CreateDateColumn,
 } from "typeorm";
 import { User } from "./User";
 import { BidItem } from "./BidItem";
+import { Delivery } from "./Delivery";
 
 @Entity()
 export class SupplierOffer {
@@ -40,4 +42,7 @@ export class SupplierOffer {
 
   @Column({ default: false })
   paid!: boolean;
+
+  @OneToOne(() => Delivery, (delivery) => delivery.offer)
+  delivery?: Delivery;
 }

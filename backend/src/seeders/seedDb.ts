@@ -13,119 +13,170 @@ const seedDatabase = async () => {
     await AppDataSource.initialize();
     console.log("Seeding database...");
 
-    // 1. Create Users
-    const admin = await AppDataSource.getRepository(User).save({
-      email: "admin@example.com",
-      password: await bcrypt.hash("password", 10),
-      role: "admin",
-      verified: true,
-    });
+    const userRepo = AppDataSource.getRepository(User);
+    const profileRepo = AppDataSource.getRepository(SupplierProfile);
+    const bidRequestRepo = AppDataSource.getRepository(BidRequest);
+    const bidItemRepo = AppDataSource.getRepository(BidItem);
+    const offerRepo = AppDataSource.getRepository(SupplierOffer);
+    const paymentRepo = AppDataSource.getRepository(Payment);
+    const deliveryRepo = AppDataSource.getRepository(Delivery);
 
-    const school = await AppDataSource.getRepository(User).save({
-      email: "school@example.com",
-      name: "Sample School",
-      password: await bcrypt.hash("password", 10),
-      role: "school",
-      verified: true,
-    });
+    // --- Create Admin ---
+    // console.log("Creating admin...");
+    const admin = await userRepo.save(
+      userRepo.create({
+        email: "admin@example.com",
+        password: await bcrypt.hash("password", 10),
+        role: "admin",
+        verified: true,
+      })
+    );
 
-    const supplier = await AppDataSource.getRepository(User).save({
-      email: "supplier@example.com",
-      name: "Sample Supplier",
-      password: await bcrypt.hash("password", 10),
-      role: "supplier",
-      verified: true,
-    });
+    // --- Create School ---
+    // console.log("Creating school...");
+    const school = await userRepo.save(
+      userRepo.create({
+        email: "school@example.com",
+        name: "Sample School",
+        password: await bcrypt.hash("password", 10),
+        role: "school",
+        verified: true,
+      })
+    );
 
-    // 2. Create Supplier Profile
-    await AppDataSource.getRepository(SupplierProfile).save({
-      user: supplier,
-      businessName: "Supplier Co.",
-      registrationNumber: "REG123456",
-      taxId: "TAX987654",
-      contactPerson: "John Doe",
-      phoneNumber: "1234567890",
-      fdaLicenseUrl: "uploads/fda_license.pdf",
-      registrationCertificateUrl: "uploads/registration_cert.pdf",
-      ownerIdUrl: "uploads/owner_id.pdf",
-      momoNumber: "0244000000",
-      bankAccount: "0011223344",
-    });
+    // --- Create Supplier ---
+    // console.log("Creating supplier and profile...");
+    const supplier = await userRepo.save(
+      userRepo.create({
+        email: "supplier@example.com",
+        name: "Sample Supplier",
+        password: await bcrypt.hash("password", 10),
+        role: "supplier",
+        verified: true,
+        companyName: "Supplier Co.",
+      })
+    );
 
-    // 3. Create Bid Request
-    const bidRequest = await AppDataSource.getRepository(BidRequest).save({
-      school: school,
-      title: "Food Supply for Term 1",
-      budget: "5000",
-      description: "We need maize and rice for the upcoming term.",
-      deadline: new Date(Date.now() + 2 * 60 * 1000), // 2 minutes from now
-    });
+    const profile = await profileRepo.save(
+      profileRepo.create({
+        user: supplier,
+        businessName: "Supplier Co.",
+        registrationNumber: "REG123456",
+        taxId: "TAX987654",
+        contactPerson: "John Doe",
+        phoneNumber: "1234567890",
+        fdaLicenseUrl: "uploads/fda_license.pdf",
+        registrationCertificateUrl: "uploads/registration_cert.pdf",
+        ownerIdUrl: "uploads/owner_id.pdf",
+        momoNumber: "0244000000",
+        bankAccount: "0011223344",
+      })
+    );
 
-    // 4. Create Bid Items
-    const maizeItem = await AppDataSource.getRepository(BidItem).save({
-      itemName: "Maize",
-      quantity: 100,
-      unit: "bags",
-      category: "Cereals",
-      bidRequest: bidRequest,
-      description: "White maize, grade A",
-    });
+    // --- Create Bid Request ---
+    // console.log("Creating bid request...");
+    const bidRequest = await bidRequestRepo.save(
+      bidRequestRepo.create({
+        school,
+        title: "Food Supply for Term 1",
+        budget: "5000",
+        description: "We need maize and rice for the upcoming term.",
+        deadline: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+      })
+    );
 
-    const riceItem = await AppDataSource.getRepository(BidItem).save({
-      itemName: "Rice",
-      quantity: 50,
-      unit: "bags",
-      category: "Cereals",
-      bidRequest: bidRequest,
-      description: "Long grain rice",
-    });
+    // --- Create Bid Items ---
+    // console.log("Creating bid items...");
+    const maizeItem = await bidItemRepo.save(
+      bidItemRepo.create({
+        itemName: "Maize",
+        quantity: 100,
+        unit: "bags",
+        category: "Cereals",
+        description: "White maize, grade A",
+        bidRequest,
+      })
+    );
 
-    // 5. Create Supplier Offers
-    const maizeOffer = await AppDataSource.getRepository(SupplierOffer).save({
-      supplier: supplier,
-      bidItem: maizeItem,
-      pricePerUnit: 50,
-      notes: "Quality maize with timely delivery.",
-      status: "accepted",
-      deliveryTime: "3 days",
-      totalPrice: 50 * 100,
-    });
+    const riceItem = await bidItemRepo.save(
+      bidItemRepo.create({
+        itemName: "Rice",
+        quantity: 50,
+        unit: "bags",
+        category: "Cereals",
+        description: "Long grain rice",
+        bidRequest,
+      })
+    );
 
-    const riceOffer = await AppDataSource.getRepository(SupplierOffer).save({
-      supplier: supplier,
-      bidItem: riceItem,
-      pricePerUnit: 70,
-      notes: "Premium long grain rice.",
+    // --- Create Offers ---
+    // console.log("Creating supplier offers...");
+    const maizeOffer = await offerRepo.save(
+      offerRepo.create({
+        supplier,
+        bidItem: maizeItem,
+        pricePerUnit: 50.0,
+        notes: "Quality maize with timely delivery.",
+        status: "accepted",
+        deliveryTime: "3 days",
+        totalPrice: 50.0 * 100,
+        paid: false,
+      })
+    );
+
+    const riceOffer = await offerRepo.save(
+      offerRepo.create({
+        supplier,
+        bidItem: riceItem,
+        pricePerUnit: 70.0,
+        notes: "Premium long grain rice.",
+        status: "pending",
+        paid: false,
+      })
+    );
+
+    // --- Create Payments ---
+    // console.log("Creating payments...");
+    await paymentRepo.save(
+      paymentRepo.create({
+        offer: maizeOffer,
+        school,
+        totalAmount: 5000,
+        paymentMethod: "mobile_money",
+        status: "pending",
+      })
+    );
+
+    await paymentRepo.save(
+      paymentRepo.create({
+        offer: riceOffer,
+        school,
+        totalAmount: 3500,
+        paymentMethod: "bank_card",
+        status: "pending",
+      })
+    );
+
+    // --- Create Deliveries ---
+    // console.log("Creating deliveries...");
+
+    // Re-save offers to make sure they are fully saved and flushed (optional safety)
+    const [savedMaizeOffer, savedRiceOffer] = await offerRepo.save([
+      maizeOffer,
+      riceOffer,
+    ]);
+
+    const maizeDelivery = deliveryRepo.create({
+      offer: savedMaizeOffer,
       status: "pending",
     });
 
-    // 6. Create Payments
-    await AppDataSource.getRepository(Payment).save({
-      offer: maizeOffer,
-      school: school,
-      totalAmount: 5000,
-      paymentMethod: "mobile_money",
+    const riceDelivery = deliveryRepo.create({
+      offer: savedRiceOffer,
       status: "pending",
     });
 
-    await AppDataSource.getRepository(Payment).save({
-      offer: riceOffer,
-      school: school,
-      totalAmount: 3500,
-      paymentMethod: "bank_card",
-      status: "pending",
-    });
-
-    // 7. Create Deliveries
-    await AppDataSource.getRepository(Delivery).save({
-      offer: maizeOffer,
-      status: "pending",
-    });
-
-    await AppDataSource.getRepository(Delivery).save({
-      offer: riceOffer,
-      status: "pending",
-    });
+    await deliveryRepo.save([maizeDelivery, riceDelivery]);
 
     console.log("Database seeded successfully.");
     process.exit(0);

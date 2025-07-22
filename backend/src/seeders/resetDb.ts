@@ -6,10 +6,12 @@ const resetDatabase = async () => {
   try {
     await AppDataSource.initialize();
     await queryRunner.connect();
-
     console.log("Resetting database...");
 
     await queryRunner.startTransaction();
+
+    // Disable constraints temporarily
+    await queryRunner.query(`SET session_replication_role = 'replica';`);
 
     await queryRunner.query(`
       TRUNCATE 
@@ -22,6 +24,9 @@ const resetDatabase = async () => {
         "user"
       RESTART IDENTITY CASCADE;
     `);
+
+    // Re-enable constraints
+    await queryRunner.query(`SET session_replication_role = 'origin';`);
 
     await queryRunner.commitTransaction();
     console.log("Database reset successfully.");

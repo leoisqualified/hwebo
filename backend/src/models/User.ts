@@ -32,6 +32,9 @@ export class User {
   @Column({ default: false })
   verified!: boolean;
 
+  @Column({nullable: true})
+  companyName!: string;
+
   @CreateDateColumn()
   createdAt!: Date;
 

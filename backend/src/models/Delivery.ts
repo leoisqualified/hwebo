@@ -3,9 +3,10 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
+  OneToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from "typeorm";
 import { SupplierOffer } from "./SupplierOffer";
 
@@ -14,7 +15,8 @@ export class Delivery {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @ManyToOne(() => SupplierOffer)
+  @OneToOne(() => SupplierOffer)
+  @JoinColumn()
   offer!: SupplierOffer;
 
   @Column({ default: "pending" })

@@ -6,7 +6,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node src/index.ts",
     "fresh": "ts-node src/seeders/resetDb.ts",
-    "seed": " ts-node src/seeders/seedDb.ts"
+    "seed": " ts-node src/seeders/seedDb.ts",
+    "fresh:seed": "ts-node src/seeders/resetDb.ts && ts-node src/seeders/seedDb.ts"
   },
   "keywords": [],
   "author": "fuckboyandy",

@@ -173,15 +173,40 @@ export const getSchoolPayments = async (
         },
         status: "accepted",
       },
-      relations: ["supplier", "bidItem", "bidItem.bidRequest"],
+      relations: [
+        "supplier",
+        "bidItem",
+        "bidItem.bidRequest",
+        "delivery", // 🔥 Add this
+      ],
       order: { createdAt: "DESC" },
     });
 
-    res.json({ awardedOffers });
+    // Format response to include deliveryId and match frontend expectations
+    const formattedOffers = awardedOffers.map((offer) => ({
+      id: offer.id,
+      deliveryId: offer.delivery?.id, // 🔥 Add delivery ID
+      bidItem: {
+        itemName: offer.bidItem.itemName,
+        quantity: offer.bidItem.quantity,
+        unit: offer.bidItem.unit,
+      },
+      supplier: {
+        email: offer.supplier.email,
+        companyName: offer.supplier.companyName,
+      },
+      pricePerUnit: Number(offer.pricePerUnit),
+      totalAmount: Number(offer.totalPrice),
+      paymentStatus: offer.paid ? "completed" : "pending",
+      awardedDate: offer.createdAt,
+    }));
+
+    res.json({ awardedOffers: formattedOffers });
   } catch (error) {
     next(error);
   }
 };
+
 
 export const getAvailableBids = async (
   req: Request,
