@@ -1,10 +1,23 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FiSearch,
+  FiDollarSign,
+  FiCheckCircle,
+  FiClock,
+  FiAlertCircle,
+  FiLoader,
+  FiCalendar,
+  FiTruck,
+  FiBox,
+  FiX,
+} from "react-icons/fi";
 
 interface Payment {
   id: string;
+  deliveryId: string;
   bidItem: {
     itemName: string;
     quantity: number;
@@ -26,17 +39,49 @@ export default function PaymentStatus() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
   const { token } = useAuth();
+
+  const handlePayNow = async (deliveryId: string) => {
+    try {
+      const res = await api.post(
+        "/payment/initiate",
+        {
+          deliveryId,
+          paymentMethod: "bank_card",
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const { authorizationUrl } = res.data;
+      window.location.href = authorizationUrl;
+    } catch (error) {
+      console.error("Error initiating payment", error);
+      setToast({
+        message: "Failed to initiate payment. Please try again.",
+        type: "error",
+      });
+    }
+  };
 
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const res = await api.get("/supplier/school-payments", {
+        const res = await api.get("/supplier-offers/school-payments", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPayments(res.data.awardedOffers);
       } catch (error) {
         console.error("Error fetching payments", error);
+        setToast({
+          message: "Failed to load payments. Please try again.",
+          type: "error",
+        });
       } finally {
         setLoading(false);
       }
@@ -59,14 +104,28 @@ export default function PaymentStatus() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
-        return "bg-[#D1FAE5] text-[#059669]";
+        return "bg-emerald-100 text-emerald-800";
       case "processing":
-        return "bg-[#DBEAFE] text-[#1E40AF]";
+        return "bg-blue-100 text-blue-800";
       case "failed":
-        return "bg-[#FEE2E2] text-[#DC2626]";
+        return "bg-red-100 text-red-800";
       case "pending":
       default:
-        return "bg-[#FEF3C7] text-[#D97706]";
+        return "bg-amber-100 text-amber-800";
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "completed":
+        return <FiCheckCircle className="mr-1.5" />;
+      case "processing":
+        return <FiLoader className="mr-1.5 animate-spin" />;
+      case "failed":
+        return <FiAlertCircle className="mr-1.5" />;
+      case "pending":
+      default:
+        return <FiClock className="mr-1.5" />;
     }
   };
 
@@ -77,52 +136,92 @@ export default function PaymentStatus() {
     }).format(amount);
   };
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#059669]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 md:p-6 max-w-7xl mx-auto">
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className={`fixed bottom-6 right-6 px-6 py-3 rounded-lg shadow-lg flex items-center justify-between z-50 ${
+              toast.type === "success"
+                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                : "bg-red-50 text-red-700 border border-red-200"
+            }`}
+          >
+            <div className="flex items-center">
+              {toast.type === "success" ? (
+                <FiCheckCircle className="mr-3 text-emerald-600" />
+              ) : (
+                <FiAlertCircle className="mr-3 text-red-600" />
+              )}
+              <span className="font-medium">{toast.message}</span>
+            </div>
+            <button
+              onClick={() => setToast(null)}
+              className="ml-4 text-current hover:text-opacity-70"
+            >
+              <FiX className="h-5 w-5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Header and Filters */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#1E3A8A]">Payment Status</h1>
-          <p className="text-gray-500">Track your payment transactions</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-[#059669]">
+            Payment Management
+          </h1>
+          <p className="text-gray-500 mt-1">
+            Track and manage supplier payments
+          </p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative">
+          <div className="relative w-full sm:w-64">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg
-                className="h-5 w-5 text-gray-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
+              <FiSearch className="h-5 w-5 text-gray-400" />
             </div>
             <input
               type="text"
               placeholder="Search payments..."
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#059669] focus:border-[#059669] outline-none transition"
+              className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm("")}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              >
+                <FiX className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+              </button>
+            )}
           </div>
 
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="border border-gray-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-[#059669] focus:border-[#059669] outline-none transition"
+            className="border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"
           >
             <option value="all">All Statuses</option>
             <option value="pending">Pending</option>
@@ -133,47 +232,44 @@ export default function PaymentStatus() {
         </div>
       </div>
 
+      {/* Payment List */}
       {filteredPayments.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm p-8 text-center">
-          <svg
-            className="mx-auto h-12 w-12 text-gray-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <h3 className="mt-2 text-lg font-medium text-gray-900">
+        <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 text-center">
+          <div className="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gray-100 mb-4">
+            <FiDollarSign className="h-8 w-8 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-1">
             No payments found
           </h3>
-          <p className="mt-1 text-gray-500">
+          <p className="text-gray-500">
             {searchTerm || statusFilter !== "all"
               ? "No payments match your criteria."
               : "You have no awarded offers yet."}
           </p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-[#F3F4F6]">
+              <thead className="bg-gray-50">
                 <tr>
                   <th
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    Item
+                    <div className="flex items-center">
+                      <FiBox className="mr-1.5" />
+                      <span>Item</span>
+                    </div>
                   </th>
                   <th
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    Supplier
+                    <div className="flex items-center">
+                      <FiTruck className="mr-1.5" />
+                      <span>Supplier</span>
+                    </div>
                   </th>
                   <th
                     scope="col"
@@ -185,7 +281,10 @@ export default function PaymentStatus() {
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    Unit Price
+                    <div className="flex items-center">
+                      <FiDollarSign className="mr-1.5" />
+                      <span>Unit Price</span>
+                    </div>
                   </th>
                   <th
                     scope="col"
@@ -197,7 +296,10 @@ export default function PaymentStatus() {
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    Awarded Date
+                    <div className="flex items-center">
+                      <FiCalendar className="mr-1.5" />
+                      <span>Awarded Date</span>
+                    </div>
                   </th>
                   <th
                     scope="col"
@@ -219,7 +321,7 @@ export default function PaymentStatus() {
                     key={payment.id}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    whileHover={{ backgroundColor: "#F9FAFB" }}
+                    whileHover={{ backgroundColor: "#f9fafb" }}
                     className="transition-colors"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -243,32 +345,33 @@ export default function PaymentStatus() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="font-medium text-[#1E3A8A]">
+                      <div className="font-medium text-emerald-600">
                         {formatCurrency(payment.totalAmount)}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(payment.awardedDate).toLocaleDateString()}
+                      {formatDate(payment.awardedDate)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
-                          payment.paymentStatus
-                        )}`}
-                      >
-                        {payment.paymentStatus.charAt(0).toUpperCase() +
-                          payment.paymentStatus.slice(1)}
-                      </span>
+                      <div className="flex items-center">
+                        <span
+                          className={`px-2.5 py-0.5 rounded-full text-xs font-medium inline-flex items-center ${getStatusColor(
+                            payment.paymentStatus
+                          )}`}
+                        >
+                          {getStatusIcon(payment.paymentStatus)}
+                          {payment.paymentStatus.charAt(0).toUpperCase() +
+                            payment.paymentStatus.slice(1)}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       {payment.paymentStatus === "pending" && (
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          onClick={() =>
-                            alert(`Initiate payment for ${payment.id}`)
-                          }
-                          className="text-[#059669] hover:text-[#047857]"
+                          onClick={() => handlePayNow(payment.deliveryId)}
+                          className="px-3 py-1 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
                         >
                           Pay Now
                         </motion.button>

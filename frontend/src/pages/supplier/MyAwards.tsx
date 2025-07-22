@@ -8,8 +8,10 @@ import {
   FiAward,
   FiDollarSign,
   FiCalendar,
+  FiAlertCircle,
+  FiX,
 } from "react-icons/fi";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface AwardedOffer {
   id: string;
@@ -33,6 +35,10 @@ interface AwardedOffer {
     };
   };
   createdAt: string;
+  delivery?: {
+    id: string;
+    status: "pending" | "in_progress" | "delivered" | "rejected";
+  };
 }
 
 const statusConfig = {
@@ -58,6 +64,28 @@ export default function MyAwards() {
   const [awards, setAwards] = useState<AwardedOffer[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+
+  const handleMarkAsDelivered = async (deliveryId: string) => {
+    try {
+      await api.post("/delivery/complete", {
+        deliveryId,
+        notes: "Goods delivered as agreed.", // You could make this optional or add a modal
+      });
+
+      setToast({ message: "Marked as delivered.", type: "success" });
+
+      // Refresh awarded offers
+      const res = await api.get("/supplier-offers/my-awarded-offers");
+      setAwards(res.data.awardedOffers);
+    } catch (err) {
+      console.error("Failed to mark as delivered", err);
+      setToast({ message: "Failed to update delivery.", type: "error" });
+    }
+  };
 
   useEffect(() => {
     const fetchAwardedOffers = async () => {
@@ -97,6 +125,36 @@ export default function MyAwards() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className={`fixed bottom-6 right-6 px-6 py-3 rounded-lg shadow-lg flex items-center justify-between z-50 ${
+              toast.type === "success"
+                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                : "bg-red-50 text-red-700 border border-red-200"
+            }`}
+          >
+            <div className="flex items-center">
+              {toast.type === "success" ? (
+                <FiCheckCircle className="mr-3 text-emerald-600" />
+              ) : (
+                <FiAlertCircle className="mr-3 text-red-600" />
+              )}
+              <span className="font-medium">{toast.message}</span>
+            </div>
+            <button
+              onClick={() => setToast(null)}
+              className="ml-4 text-current hover:text-opacity-70"
+            >
+              <FiX className="h-5 w-5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[#059669]">
@@ -166,7 +224,7 @@ export default function MyAwards() {
                   <div className="flex-1">
                     <div className="flex items-start gap-4">
                       <div className="flex-shrink-0 h-12 w-12 rounded-lg bg-indigo-50 flex items-center justify-center">
-                      <FiPackage className="h-5 w-5 text-[#FFD700]" />
+                        <FiPackage className="h-5 w-5 text-[#FFD700]" />
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">
@@ -266,12 +324,18 @@ export default function MyAwards() {
                           Actions
                         </p>
                         <div className="flex gap-2">
-                          <button className="text-sm font-medium text-indigo-600 hover:text-indigo-800">
-                            Update
-                          </button>
-                          <button className="text-sm font-medium text-gray-600 hover:text-gray-800">
-                            Details
-                          </button>
+                          {offer.delivery &&
+                            offer.delivery?.status !== "delivered" && (
+                              <button
+                                className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                                onClick={() =>
+                                  handleMarkAsDelivered(offer.delivery!.id)
+                                }
+                              >
+                                Mark Delivered
+                              </button>
+                            )}
+                          <pre>{JSON.stringify(offer.delivery?.status)}</pre>
                         </div>
                       </div>
                     </div>
