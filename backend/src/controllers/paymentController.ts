@@ -120,8 +120,8 @@ export const paystackWebhook = async (
   });
 
   if (!payment || payment.status === "paid") {
-     res.sendStatus(200);
-     return;
+    res.sendStatus(200);
+    return;
   }
 
   // Confirm via Paystack API
@@ -146,4 +146,43 @@ export const paystackWebhook = async (
   }
 
   res.sendStatus(200);
+};
+
+// Verify payment
+export const verifyPaymentStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { reference } = req.body;
+
+    if (!reference) {
+      res.status(400).json({ success: false, message: "Missing reference" });
+      return;
+    }
+
+    const verification = await axios.get(
+      `https://api.paystack.co/transaction/verify/${reference}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+        },
+      }
+    );
+
+    const data = verification.data.data;
+
+    if (data.status === "success") {
+      res.status(200).json({ success: true });
+      return;
+    } else {
+      res
+        .status(200)
+        .json({ success: false, message: "Payment not successful" });
+      return;
+    }
+  } catch (error) {
+    next(error);
+  }
 };

@@ -9,6 +9,7 @@ import supplierRoutes from "./routes/supplier";
 import bidRequestRoutes from "./routes/bidRequests";
 import supplierOfferRoutes from "./routes/supplierOffer";
 import paymentRoutes from "./routes/payment";
+import deliveryRoutes from "./routes/delivery";
 import cors from "cors";
 import path from "path";
 
@@ -33,6 +34,7 @@ app.use("/api/bid-requests", bidRequestRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 app.use("/api/supplier-offers", supplierOfferRoutes);
 app.use("/api/payment", paymentRoutes);
+app.use('/api/delivery', deliveryRoutes)
 
 // Global error handler
 app.use(errorHandler);

@@ -13,6 +13,7 @@ import SchoolDashboard from "./pages/SchoolDashboard";
 import AvailableBids from "./pages/school/AvailableBids";
 import PostBid from "./pages/school/PostBid";
 import PaymentStatus from "./pages/school/PaymentStatus";
+import PaymentCallback from "./pages/school/PaymentCallback";
 
 // Admin Pages
 import AdminDashboard from "./pages/AdminDashboard";
@@ -23,6 +24,7 @@ import ManageUsers from "./pages/admin/ManageUsers";
 
 // Supplier Pages
 import MyAwards from "./pages/supplier/MyAwards";
+import Unauthorized from "./pages/Unauthorized";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -87,6 +89,14 @@ const router = createBrowserRouter([
       // Uncomment if you add PaymentStatus later
       // { path: "payment-status", element: <PaymentStatus /> },
     ],
+  },
+  {
+    path: "/payment-callback",
+    element: <PaymentCallback />,
+  },
+  {
+    path: "/unauthorized",
+    element: <Unauthorized />,
   },
 ]);
 

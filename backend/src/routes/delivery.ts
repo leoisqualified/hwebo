@@ -12,3 +12,5 @@ const router = express.Router();
 router.post("/start", authenticate, startDelivery);
 router.post("/complete", authenticate, completeDelivery);
 router.post("/confirm", authenticate, confirmDelivery);
+
+export default router;

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   FiSearch,
   FiDollarSign,
@@ -44,6 +45,8 @@ export default function PaymentStatus() {
     type: "success" | "error";
   } | null>(null);
   const { token } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handlePayNow = async (deliveryId: string) => {
     try {
@@ -89,6 +92,31 @@ export default function PaymentStatus() {
 
     fetchPayments();
   }, [token]);
+
+  useEffect(() => {
+    if (location.state?.paymentUpdated) {
+      setLoading(true);
+      api
+        .get("/supplier-offers/school-payments", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+          setPayments(res.data.awardedOffers);
+        })
+        .catch((error) => {
+          console.error("Error refreshing payments", error);
+          setToast({
+            message: "Failed to refresh payments.",
+            type: "error",
+          });
+        })
+        .finally(() => {
+          setLoading(false);
+          // Clean up state so the refresh doesn't happen again on next load
+          navigate(location.pathname, { replace: true });
+        });
+    }
+  }, [location.state, navigate, token]);
 
   const filteredPayments = payments.filter((payment) => {
     const matchesSearch =

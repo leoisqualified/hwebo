@@ -327,7 +327,7 @@ export default function MyAwards() {
                           {offer.delivery &&
                             offer.delivery?.status !== "delivered" && (
                               <button
-                                className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                                className="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:cursor-pointer"
                                 onClick={() =>
                                   handleMarkAsDelivered(offer.delivery!.id)
                                 }
@@ -335,7 +335,6 @@ export default function MyAwards() {
                                 Mark Delivered
                               </button>
                             )}
-                          <pre>{JSON.stringify(offer.delivery?.status)}</pre>
                         </div>
                       </div>
                     </div>
