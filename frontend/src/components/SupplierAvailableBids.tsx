@@ -110,6 +110,15 @@ const SupplierAvailableBids = () => {
     }
   };
 
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null);
+      }, 5000); // Auto-dismiss after 5 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
   const toggleBidExpand = (bidId: string) => {
     setExpandedBid(expandedBid === bidId ? null : bidId);
   };
