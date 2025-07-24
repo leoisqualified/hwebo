@@ -137,6 +137,40 @@ const seedDatabase = async () => {
       })
     );
 
+    // --- Create a Bid Request with NO supplier offers ---
+    const emptyBidRequest = await bidRequestRepo.save(
+      bidRequestRepo.create({
+        school,
+        title: "Stationery Supply for Term 1",
+        budget: "2000",
+        description: "Need pens, notebooks, and chalk for classrooms.",
+        deadline: new Date(Date.now() + 5 * 60 * 1000),
+      })
+    );
+
+    // --- Add Bid Items to the Request ---
+    const penItem = await bidItemRepo.save(
+      bidItemRepo.create({
+        itemName: "Ballpoint Pens",
+        quantity: 200,
+        unit: "pieces",
+        category: "Stationery",
+        description: "Blue and black pens",
+        bidRequest: emptyBidRequest,
+      })
+    );
+
+    const notebookItem = await bidItemRepo.save(
+      bidItemRepo.create({
+        itemName: "Notebooks",
+        quantity: 100,
+        unit: "pieces",
+        category: "Stationery",
+        description: "A4 100-page notebooks",
+        bidRequest: emptyBidRequest,
+      })
+    );
+
     // --- Create Payments ---
     // console.log("Creating payments...");
     await paymentRepo.save(
