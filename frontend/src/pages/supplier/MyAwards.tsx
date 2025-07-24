@@ -88,6 +88,15 @@ export default function MyAwards() {
   };
 
   useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null);
+      }, 5000); // Auto-dismiss after 5 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
+  useEffect(() => {
     const fetchAwardedOffers = async () => {
       try {
         const res = await api.get("/supplier-offers/my-awarded-offers");

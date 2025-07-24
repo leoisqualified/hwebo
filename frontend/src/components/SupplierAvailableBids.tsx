@@ -9,8 +9,12 @@ import {
   FiCalendar,
   FiBook,
   FiLayers,
+  FiAlertCircle,
+  FiAlertTriangle,
+  FiX,
 } from "react-icons/fi";
 import { FaSpinner } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface BidItem {
   id: string;
@@ -40,6 +44,10 @@ const SupplierAvailableBids = () => {
   const [expandedBid, setExpandedBid] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error" | "warning";
+  } | null>(null);
 
   useEffect(() => {
     fetchAvailableBids();
@@ -72,7 +80,10 @@ const SupplierAvailableBids = () => {
     const { pricePerUnit, notes } = offers[bidItemId] || {};
 
     if (!pricePerUnit) {
-      alert("Please enter a price per unit.");
+      setToast({
+        message: "Please enter a price per unit.",
+        type: "warning",
+      });
       return;
     }
 
@@ -83,11 +94,17 @@ const SupplierAvailableBids = () => {
         pricePerUnit: parseFloat(pricePerUnit),
         notes,
       });
-      alert("Offer submitted successfully!");
+      setToast({
+        message: "Offer submitted successfully!",
+        type: "success",
+      });
       fetchAvailableBids();
     } catch (error: any) {
       console.error("Error submitting offer", error);
-      alert(error.response?.data?.error || "Error submitting offer");
+      setToast({
+        message: error.response?.data?.error || "Error submitting offer",
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -129,6 +146,40 @@ const SupplierAvailableBids = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className={`fixed bottom-6 right-6 px-6 py-3 rounded-lg shadow-lg flex items-center justify-between z-50 ${
+              toast.type === "success"
+                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                : toast.type === "error"
+                ? "bg-red-50 text-red-700 border border-red-200"
+                : "bg-amber-50 text-amber-700 border border-amber-200"
+            }`}
+          >
+            <div className="flex items-center">
+              {toast.type === "success" ? (
+                <FiCheckCircle className="mr-3 text-emerald-600" />
+              ) : toast.type === "error" ? (
+                <FiAlertCircle className="mr-3 text-red-600" />
+              ) : (
+                <FiAlertTriangle className="mr-3 text-amber-600" />
+              )}
+              <span className="font-medium">{toast.message}</span>
+            </div>
+            <button
+              onClick={() => setToast(null)}
+              className="ml-4 text-current hover:text-opacity-70"
+            >
+              <FiX className="h-5 w-5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-[#059669]">
@@ -239,15 +290,15 @@ const SupplierAvailableBids = () => {
 
                   <div className="flex flex-wrap gap-4">
                     <div className="flex items-center text-sm text-gray-600">
-                      <FiCalendar className="mr-2 text-indigo-600" />
+                      <FiCalendar className="mr-2 text-[#059669]" />
                       <span>Deadline: {formatDate(bid.deadline)}</span>
                     </div>
                     <div className="flex items-center text-sm text-gray-600">
-                      <FiBook className="mr-2 text-indigo-600" />
+                      <FiBook className="mr-2 text-[#059669]" />
                       <span>{bid.school}</span>
                     </div>
                     <div className="flex items-center text-sm text-gray-600">
-                      <FiLayers className="mr-2 text-indigo-600" />
+                      <FiLayers className="mr-2 text-[#059669]" />
                       <span>{bid.items.length} items</span>
                     </div>
 
@@ -308,7 +359,7 @@ const SupplierAvailableBids = () => {
                           <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4">
                             <div>
                               <h5 className="font-semibold text-gray-900 flex items-center">
-                                <FiPackage className="mr-2 text-indigo-600" />
+                                <FiPackage className="mr-2 text-[#059669]" />
                                 {item.itemName}
                               </h5>
                               <div className="flex flex-wrap gap-3 mt-2 text-sm">
@@ -335,7 +386,7 @@ const SupplierAvailableBids = () => {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-1">
-                                <FiDollarSign className="inline mr-1 text-indigo-600" />
+                                <FiDollarSign className="inline mr-1 text-[#059669]" />
                                 Price per Unit (GH₵)
                               </label>
                               <div className="relative">
@@ -360,7 +411,7 @@ const SupplierAvailableBids = () => {
 
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-1">
-                                <FiEdit2 className="inline mr-1 text-indigo-600" />
+                                <FiEdit2 className="inline mr-1 text-[#059669]" />
                                 Additional Notes (Optional)
                               </label>
                               <textarea
@@ -381,7 +432,7 @@ const SupplierAvailableBids = () => {
 
                           <button
                             onClick={() => submitOffer(item.id)}
-                            className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md transition-colors flex items-center justify-center w-full sm:w-auto sm:px-6"
+                            className="mt-4 bg-[#059669] hover:bg-[#047857] hover:cursor-pointer text-white px-4 py-2 rounded-md transition-colors flex items-center justify-center w-full sm:w-auto sm:px-6"
                             disabled={loading}
                           >
                             {loading ? (

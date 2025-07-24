@@ -1,7 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import api from "../../services/api";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FiCheckCircle,
+  FiAlertCircle,
+  FiAlertTriangle,
+  FiX,
+} from "react-icons/fi";
 
 export default function PostBid() {
   const [title, setTitle] = useState("");
@@ -10,10 +16,12 @@ export default function PostBid() {
   const [items, setItems] = useState([
     { itemName: "", quantity: 1, unit: "", description: "", category: "" },
   ]);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const navigate = useNavigate();
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error" | "warning";
+  } | null>(null);
 
   const handleItemChange = (
     index: number,
@@ -44,18 +52,68 @@ export default function PostBid() {
     setIsSubmitting(true);
     try {
       await api.post("/bid-requests", { title, description, deadline, items });
-      alert("Bid posted successfully!");
-      navigate("/school-dashboard/my-bids");
+      setToast({
+        message: "Bid posted successfully!",
+        type: "success",
+      });
+      // Optionally navigate after successful submission
+      // navigate("/school-dashboard");
     } catch (error) {
       console.error(error);
-      alert("Failed to post bid. Please try again.");
+      setToast({
+        message: "Failed to post bid. Please try again.",
+        type: "error",
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null);
+      }, 5000); // Auto-dismiss after 5 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
   return (
     <div className="max-w-3xl mx-auto p-6">
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className={`fixed bottom-6 right-6 px-6 py-3 rounded-lg shadow-lg flex items-center justify-between z-50 ${
+              toast.type === "success"
+                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                : toast.type === "error"
+                ? "bg-red-50 text-red-700 border border-red-200"
+                : "bg-amber-50 text-amber-700 border border-amber-200"
+            }`}
+          >
+            <div className="flex items-center">
+              {toast.type === "success" ? (
+                <FiCheckCircle className="mr-3 text-emerald-600" />
+              ) : toast.type === "error" ? (
+                <FiAlertCircle className="mr-3 text-red-600" />
+              ) : (
+                <FiAlertTriangle className="mr-3 text-amber-600" />
+              )}
+              <span className="font-medium">{toast.message}</span>
+            </div>
+            <button
+              onClick={() => setToast(null)}
+              className="ml-4 text-current hover:text-opacity-70"
+            >
+              <FiX className="h-5 w-5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

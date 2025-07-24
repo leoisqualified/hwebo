@@ -73,6 +73,15 @@ export default function PaymentStatus() {
   };
 
   useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null);
+      }, 5000); // Auto-dismiss after 5 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
+  useEffect(() => {
     const fetchPayments = async () => {
       try {
         const res = await api.get("/supplier-offers/school-payments", {

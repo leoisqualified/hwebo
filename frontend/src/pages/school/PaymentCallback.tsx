@@ -24,7 +24,7 @@ const PaymentCallback = () => {
         }
 
         // Send to backend to verify payment status
-        const response = await api.post("/payments/verify", {
+        const response = await api.post("/payment/verify", {
           reference: ref || txRef,
         });
 
