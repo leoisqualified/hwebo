@@ -47,17 +47,89 @@ export default function PostBid() {
     }
   };
 
+  const validateForm = () => {
+    if (!title.trim()) {
+      setToast({ type: "error", message: "Bid Title is required." });
+      return false;
+    }
+
+    if (!description.trim()) {
+      setToast({ type: "error", message: "Description is required." });
+      return false;
+    }
+
+    if (!deadline) {
+      setToast({ type: "error", message: "Deadline is required." });
+      return false;
+    }
+
+    const deadlineDate = new Date(deadline);
+    if (isNaN(deadlineDate.getTime()) || deadlineDate <= new Date()) {
+      setToast({
+        type: "error",
+        message: "Deadline must be a valid future date.",
+      });
+      return false;
+    }
+
+    if (items.length === 0) {
+      setToast({
+        type: "error",
+        message: "At least one bid item is required.",
+      });
+      return false;
+    }
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (!item.itemName.trim()) {
+        setToast({ type: "error", message: `Item ${i + 1} name is required.` });
+        return false;
+      }
+
+      if (!item.quantity || item.quantity <= 0) {
+        setToast({
+          type: "error",
+          message: `Item ${i + 1} must have a quantity greater than 0.`,
+        });
+        return false;
+      }
+
+      if (!item.unit.trim()) {
+        setToast({ type: "error", message: `Item ${i + 1} unit is required.` });
+        return false;
+      }
+
+      if (!item.category.trim()) {
+        setToast({
+          type: "error",
+          message: `Item ${i + 1} category is required.`,
+        });
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
     setIsSubmitting(true);
+
     try {
       await api.post("/bid-requests", { title, description, deadline, items });
       setToast({
         message: "Bid posted successfully!",
         type: "success",
       });
-      // Optionally navigate after successful submission
-      // navigate("/school-dashboard");
+
+      // Optionally navigate or reset form here
+      // navigate("/school-dashboard/my-bids");
     } catch (error) {
       console.error(error);
       setToast({
