@@ -24,6 +24,7 @@
     "multer": "^2.0.1",
     "pg": "^8.16.2",
     "reflect-metadata": "^0.2.2",
+    "socket.io": "^4.8.1",
     "typeorm": "^0.3.25",
     "zod": "^3.25.67"
   },
