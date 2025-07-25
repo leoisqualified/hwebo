@@ -160,16 +160,16 @@ const seedDatabase = async () => {
       })
     );
 
-    const notebookItem = await bidItemRepo.save(
-      bidItemRepo.create({
-        itemName: "Notebooks",
-        quantity: 100,
-        unit: "pieces",
-        category: "Stationery",
-        description: "A4 100-page notebooks",
-        bidRequest: emptyBidRequest,
-      })
-    );
+    // const notebookItem = await bidItemRepo.save(
+    //   bidItemRepo.create({
+    //     itemName: "Notebooks",
+    //     quantity: 100,
+    //     unit: "pieces",
+    //     category: "Stationery",
+    //     description: "A4 100-page notebooks",
+    //     bidRequest: emptyBidRequest,
+    //   })
+    // );
 
     // --- Create Payments ---
     // console.log("Creating payments...");
