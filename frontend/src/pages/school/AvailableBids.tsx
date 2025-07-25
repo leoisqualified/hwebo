@@ -487,7 +487,7 @@ export default function AvailableBids() {
                                             .toUpperCase() +
                                             offer.status.slice(1)}
                                         </span>
-                                        {new Date(bid.deadline) > new Date() &&
+                                        {new Date(bid.deadline) <= new Date() &&
                                           offer.status === "pending" && (
                                             <motion.button
                                               whileHover={{ scale: 1.05 }}
