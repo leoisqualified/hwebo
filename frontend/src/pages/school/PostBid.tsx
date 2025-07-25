@@ -383,7 +383,7 @@ export default function PostBid() {
           <div className="flex justify-end space-x-4 pt-4">
             <motion.button
               type="button"
-              onClick={() => navigate("/school-dashboard/my-bids")}
+              onClick={() => navigate("/school-dashboard/available-bids")}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors"
