@@ -1,0 +1,12 @@
+[
+  {
+    "businessName": "Supplier Co.",
+    "registrationNumber": "REG123456",
+    "taxId": "TIN7890"
+  },
+  {
+    "businessName": "Golden Maize Ltd",
+    "registrationNumber": "REG234567",
+    "taxId": "TIN4567"
+  }
+]

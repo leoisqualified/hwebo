@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import { AppDataSource } from "../config/db";
 import { SupplierProfile } from "../models/SupplierProfile";
 import { User } from "../models/User";
+import { verifySupplierAgainstExternalRegistry } from "./adminController";
 
 const profileRepo = AppDataSource.getRepository(SupplierProfile);
 const userRepo = AppDataSource.getRepository(User);
@@ -61,10 +62,22 @@ export const submitSupplierProfile = async (
     });
 
     await profileRepo.save(profile);
-    res
-      .status(201)
-      .json({ message: "KYC submitted. Await admin verification." });
+
+    // Check external registry for auto-verification
+    const isVerified = await verifySupplierAgainstExternalRegistry(
+      businessName,
+      registrationNumber,
+      taxId
+    );
+
+    if (isVerified) {
+      user.verified = true;
+      await userRepo.save(user);
+    }
+
+    res.status(201).json({ message: "Profile submitted successfully" });
   } catch (error) {
-    next(error);
+    console.error("Error submitting supplier profile:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };

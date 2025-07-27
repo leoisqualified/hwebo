@@ -69,6 +69,18 @@ const seedDatabase = async () => {
       })
     );
 
+    // --- Create Unverified Supplier ---
+    const verifiedSupplier2 = await userRepo.save(
+      userRepo.create({
+        email: "supplier3@example.com",
+        name: "Unverified Supplier",
+        password: await bcrypt.hash("password", 10),
+        role: "supplier",
+        verified: true,
+        companyName: "NewCo Unverified Ltd.",
+      })
+    );
+
     const profile = await profileRepo.save(
       profileRepo.create({
         user: verifiedSupplier,
