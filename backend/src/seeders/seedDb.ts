@@ -46,9 +46,9 @@ const seedDatabase = async () => {
 
     // --- Create Supplier ---
     // console.log("Creating supplier and profile...");
-    const supplier = await userRepo.save(
+    const verifiedSupplier = await userRepo.save(
       userRepo.create({
-        email: "supplier@example.com",
+        email: "supplier1@example.com",
         name: "Sample Supplier",
         password: await bcrypt.hash("password", 10),
         role: "supplier",
@@ -57,9 +57,21 @@ const seedDatabase = async () => {
       })
     );
 
+    // --- Create Unverified Supplier ---
+    const unverifiedSupplier = await userRepo.save(
+      userRepo.create({
+        email: "supplier2@example.com",
+        name: "Unverified Supplier",
+        password: await bcrypt.hash("password", 10),
+        role: "supplier",
+        verified: false,
+        companyName: "NewCo Unverified Ltd.",
+      })
+    );
+
     const profile = await profileRepo.save(
       profileRepo.create({
-        user: supplier,
+        user: verifiedSupplier,
         businessName: "Supplier Co.",
         registrationNumber: "REG123456",
         taxId: "TAX987654",
@@ -113,7 +125,7 @@ const seedDatabase = async () => {
     // console.log("Creating supplier offers...");
     const maizeOffer = await offerRepo.save(
       offerRepo.create({
-        supplier,
+        supplier: verifiedSupplier,
         bidItem: maizeItem,
         pricePerUnit: 50.0,
         notes: "Quality maize with timely delivery.",
@@ -126,7 +138,7 @@ const seedDatabase = async () => {
 
     const riceOffer = await offerRepo.save(
       offerRepo.create({
-        supplier,
+        supplier: verifiedSupplier,
         bidItem: riceItem,
         pricePerUnit: 70.0,
         notes: "Premium long grain rice.",
