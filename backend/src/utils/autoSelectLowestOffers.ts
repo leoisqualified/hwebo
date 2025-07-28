@@ -3,6 +3,7 @@ import { SupplierOffer } from "../models/SupplierOffer";
 import { BidItem } from "../models/BidItem";
 import { BidRequest } from "../models/BidRequest";
 import { AppDataSource } from "../config/db";
+import { sendEmail, sendSMS } from "../utils/notifications";
 
 const bidItemRepo = AppDataSource.getRepository(BidItem);
 const bidRequestRepo = AppDataSource.getRepository(BidRequest);
@@ -11,11 +12,12 @@ const offerRepo = AppDataSource.getRepository(SupplierOffer);
 export const autoSelectLowestOffers = async () => {
   const now = new Date();
 
-  // Get all bid items whose parent request has expired and no winner has been selected
   const expiredItems = await bidItemRepo
     .createQueryBuilder("item")
     .leftJoinAndSelect("item.bidRequest", "bidRequest")
     .leftJoinAndSelect("item.offers", "offers")
+    .leftJoinAndSelect("offers.supplier", "supplier")
+    .leftJoinAndSelect("supplier.supplierProfile", "supplierProfile") // 👈 this is key
     .where("bidRequest.deadline < :now", { now })
     .andWhere((qb) => {
       const subQuery = qb
@@ -32,12 +34,10 @@ export const autoSelectLowestOffers = async () => {
   for (const item of expiredItems) {
     if (!item.offers.length) continue;
 
-    // Find lowest price offer
     const lowestOffer = item.offers.reduce((min, o) =>
       o.pricePerUnit < min.pricePerUnit ? o : min
     );
 
-    // Reject all others
     await offerRepo
       .createQueryBuilder()
       .update(SupplierOffer)
@@ -48,17 +48,31 @@ export const autoSelectLowestOffers = async () => {
       })
       .execute();
 
-    // Accept lowest
     lowestOffer.status = "accepted";
     lowestOffer.totalPrice = lowestOffer.pricePerUnit * item.quantity;
-    lowestOffer.deliveryTime = "3"; // or default
+    lowestOffer.deliveryTime = "3";
 
     await offerRepo.save(lowestOffer);
 
-    // Optional: Send notification to winner
-    console.log(
-      `✅ Offer ${lowestOffer.id} selected as winner for item ${item.itemName}`
-    );
+    const supplier = lowestOffer.supplier;
+    const profile = supplier.supplierProfile;
+
+    // ✅ Send notification
+    const message = `🎉 Your offer for "${item.itemName}" has been selected! Total: ${lowestOffer.totalPrice}`;
+
+    if (profile?.phoneNumber) {
+      await sendSMS(profile.phoneNumber, message);
+    }
+
+    if (supplier.email) {
+      await sendEmail(
+        supplier.email,
+        "Congratulations! Your Offer Was Selected",
+        `Hi ${profile.contactPerson},\n\n${message}\n\nThank you for bidding!`
+      );
+    }
+
+    console.log(`✅ Offer ${lowestOffer.id} selected for ${item.itemName}`);
   }
 
   console.log(`Auto-selection completed at ${now.toISOString()}`);
