@@ -458,7 +458,7 @@ export default function SupplierKYC() {
                   !contactPerson ||
                   !phoneNumber
                     ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                    : "bg-indigo-600 text-white hover:bg-indigo-700"
+                    : "bg-[#059669] text-white hover:bg-indigo-700"
                 }`}
               >
                 {uploading ? (
