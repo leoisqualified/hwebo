@@ -48,7 +48,7 @@ const seedDatabase = async () => {
     // console.log("Creating supplier and profile...");
     const verifiedSupplier = await userRepo.save(
       userRepo.create({
-        email: "supplier1@example.com",
+        email: "leoisqualified@gmail.com",
         name: "Sample Supplier",
         password: await bcrypt.hash("password", 10),
         role: "supplier",
