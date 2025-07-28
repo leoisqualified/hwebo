@@ -5,6 +5,8 @@ import { BidRequest } from "../models/BidRequest";
 import { BidItem } from "../models/BidItem";
 import { User } from "../models/User";
 import { MoreThan } from "typeorm";
+import { batchSendBidNotifications } from "../utils/mailer";
+import { sendBidNotificationSMS } from "../utils/sms"; // assuming you’ve created this
 
 const bidRequestRepo = AppDataSource.getRepository(BidRequest);
 const userRepo = AppDataSource.getRepository(User);
@@ -22,7 +24,7 @@ export const createBidRequest = async (
 
     if (user.role !== "school") {
       res.status(403).json({ error: "Only schools can create bid requests." });
-      return; // Important: stop further execution if unauthorized
+      return;
     }
 
     const bidItems = items.map((item: any) => {
@@ -43,14 +45,42 @@ export const createBidRequest = async (
       items: bidItems,
     });
 
-    // Link the bidRequest to each bidItem
     bidRequest.items.forEach((item) => {
       item.bidRequest = bidRequest;
     });
 
     await bidRequestRepo.save(bidRequest);
 
-    // Prepare safe response without circular references
+    // 🟡 Add notifications here
+    const suppliers = await userRepo.find({
+      where: { role: "supplier", verified: true },
+      relations: ["supplierProfile"],
+    });
+
+    const emailList = suppliers.map((s) => ({
+      email: s.email,
+      name: s.name || s.companyName || "Supplier",
+    }));
+
+    await batchSendBidNotifications(
+      emailList,
+      bidRequest.title,
+      bidRequest.deadline
+    );
+
+    // 🔔 Optional SMS
+    for (const s of suppliers) {
+      if (s.supplierProfile?.phoneNumber) {
+        await sendBidNotificationSMS(
+          s.supplierProfile.phoneNumber,
+          s.name || s.companyName || "Supplier",
+          bidRequest.title,
+          bidRequest.deadline
+        );
+      }
+    }
+
+    // ✅ Final response
     const responsePayload = {
       id: bidRequest.id,
       title: bidRequest.title,
