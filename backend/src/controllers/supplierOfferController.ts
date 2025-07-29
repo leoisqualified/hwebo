@@ -177,7 +177,7 @@ export const getSchoolPayments = async (
         "supplier",
         "bidItem",
         "bidItem.bidRequest",
-        "delivery", // 🔥 Add this
+        "delivery", 
       ],
       order: { createdAt: "DESC" },
     });
@@ -185,7 +185,7 @@ export const getSchoolPayments = async (
     // Format response to include deliveryId and match frontend expectations
     const formattedOffers = awardedOffers.map((offer) => ({
       id: offer.id,
-      deliveryId: offer.delivery?.id, // 🔥 Add delivery ID
+      deliveryId: offer.delivery?.id, 
       bidItem: {
         itemName: offer.bidItem.itemName,
         quantity: offer.bidItem.quantity,

@@ -17,7 +17,7 @@ export const autoSelectLowestOffers = async () => {
     .leftJoinAndSelect("item.bidRequest", "bidRequest")
     .leftJoinAndSelect("item.offers", "offers")
     .leftJoinAndSelect("offers.supplier", "supplier")
-    .leftJoinAndSelect("supplier.supplierProfile", "supplierProfile") // 👈 this is key
+    .leftJoinAndSelect("supplier.supplierProfile", "supplierProfile")
     .where("bidRequest.deadline < :now", { now })
     .andWhere((qb) => {
       const subQuery = qb
@@ -58,7 +58,7 @@ export const autoSelectLowestOffers = async () => {
     const profile = supplier.supplierProfile;
 
     // ✅ Send notification
-    const message = `🎉 Your offer for "${item.itemName}" has been selected! Total: ${lowestOffer.totalPrice}`;
+    const message = `Your offer for "${item.itemName}" has been selected! Total: ${lowestOffer.totalPrice}`;
 
     if (profile?.phoneNumber) {
       await sendSMS(profile.phoneNumber, message);
@@ -72,7 +72,7 @@ export const autoSelectLowestOffers = async () => {
       );
     }
 
-    console.log(`✅ Offer ${lowestOffer.id} selected for ${item.itemName}`);
+    console.log(`Offer ${lowestOffer.id} selected for ${item.itemName}`);
   }
 
   console.log(`Auto-selection completed at ${now.toISOString()}`);

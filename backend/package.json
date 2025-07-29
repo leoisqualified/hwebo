@@ -7,16 +7,19 @@
     "dev": "ts-node src/index.ts",
     "fresh": "ts-node src/seeders/resetDb.ts",
     "seed": " ts-node src/seeders/seedDb.ts",
-    "fresh:seed": "ts-node src/seeders/resetDb.ts && ts-node src/seeders/seedDb.ts"
+    "fresh:seed": "ts-node src/seeders/resetDb.ts && ts-node src/seeders/seedDb.ts",
+    "autoselect": "ts-node src/seeders/seedTestAutoSelect.ts"
   },
   "keywords": [],
   "author": "fuckboyandy",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/nodemailer": "^6.4.17",
     "axios": "^1.10.0",
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",

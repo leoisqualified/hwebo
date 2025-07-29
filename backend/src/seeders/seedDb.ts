@@ -23,14 +23,14 @@ const seedDatabase = async () => {
 
     // --- Create Admin ---
     // console.log("Creating admin...");
-    const admin = await userRepo.save(
-      userRepo.create({
-        email: "admin@example.com",
-        password: await bcrypt.hash("password", 10),
-        role: "admin",
-        verified: true,
-      })
-    );
+    // const admin = await userRepo.save(
+    //   userRepo.create({
+    //     email: "admin@example.com",
+    //     password: await bcrypt.hash("password", 10),
+    //     role: "admin",
+    //     verified: true,
+    //   })
+    // );
 
     // --- Create School ---
     // console.log("Creating school...");
