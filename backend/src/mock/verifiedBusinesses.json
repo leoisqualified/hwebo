@@ -8,5 +8,45 @@
     "businessName": "Golden Maize Ltd",
     "registrationNumber": "REG234567",
     "taxId": "TIN4567"
+  },
+  {
+    "businessName": "FreshHarvest Ventures",
+    "registrationNumber": "REG345678",
+    "taxId": "TIN8910"
+  },
+  {
+    "businessName": "AgroSupply Ghana",
+    "registrationNumber": "REG456789",
+    "taxId": "TIN1122"
+  },
+  {
+    "businessName": "Prime Foods & Grains",
+    "registrationNumber": "REG567890",
+    "taxId": "TIN3344"
+  },
+  {
+    "businessName": "Greenfield Distribution",
+    "registrationNumber": "REG678901",
+    "taxId": "TIN5566"
+  },
+  {
+    "businessName": "NutriSource Ltd",
+    "registrationNumber": "REG789012",
+    "taxId": "TIN7788"
+  },
+  {
+    "businessName": "Bulk Agro Traders",
+    "registrationNumber": "REG890123",
+    "taxId": "TIN9900"
+  },
+  {
+    "businessName": "HarvestLink Enterprise",
+    "registrationNumber": "REG901234",
+    "taxId": "TIN2233"
+  },
+  {
+    "businessName": "Sunrise Agrodealers",
+    "registrationNumber": "REG012345",
+    "taxId": "TIN4455"
   }
 ]
