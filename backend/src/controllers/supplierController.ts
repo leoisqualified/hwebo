@@ -56,7 +56,7 @@ export const submitSupplierProfile = async (
       phoneNumber,
       momoNumber,
       bankAccount,
-      fdaLicenseUrl: fdaLicenseFile.filename, // or use full path if needed
+      fdaLicenseUrl: fdaLicenseFile.filename,
       registrationCertificateUrl: registrationCertFile.filename,
       ownerIdUrl: ownerIdFile.filename,
     });

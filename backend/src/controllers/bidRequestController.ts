@@ -6,7 +6,7 @@ import { BidItem } from "../models/BidItem";
 import { User } from "../models/User";
 import { MoreThan } from "typeorm";
 import { batchSendBidNotifications } from "../utils/mailer";
-import { sendBidNotificationSMS } from "../utils/sms"; 
+import { sendBidNotificationSMS } from "../utils/sms";
 
 const bidRequestRepo = AppDataSource.getRepository(BidRequest);
 const userRepo = AppDataSource.getRepository(User);
@@ -17,7 +17,8 @@ export const createBidRequest = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { title, description, deadline, items } = req.body;
+    const { title, description, deadline: rawDeadline, items } = req.body;
+    const deadline = new Date(rawDeadline);
 
     const userId = (req as any).user.userId;
     const user = await userRepo.findOneByOrFail({ id: userId });
