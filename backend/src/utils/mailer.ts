@@ -22,89 +22,103 @@ export const sendBidNotificationEmail = async (
     subject: `New Bid Opportunity: ${bidTitle}`,
     html: `
       <!DOCTYPE html>
-    <html>
-    <head>
-        <style>
-            body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                line-height: 1.6;
-                color: #333;
-                max-width: 600px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-            .header {
-                background-color: #2c3e50;
-                color: white;
-                padding: 20px;
-                text-align: center;
-                border-radius: 5px 5px 0 0;
-            }
-            .content {
-                padding: 20px;
-                background-color: #f9f9f9;
-                border: 1px solid #e1e1e1;
-                border-top: none;
-            }
-            .footer {
-                margin-top: 20px;
-                font-size: 0.9em;
-                color: #777;
-                text-align: center;
-            }
-            .button {
-                display: inline-block;
-                padding: 10px 20px;
-                margin: 20px 0;
-                background-color: #3498db;
-                color: white;
-                text-decoration: none;
-                border-radius: 5px;
-                font-weight: bold;
-            }
-            .button:hover {
-                background-color: #2980b9;
-            }
-            .highlight {
-                background-color: #fffacd;
-                padding: 2px 5px;
-                border-radius: 3px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="header">
-            <h2>New Bid Opportunity</h2>
-        </div>
-        
-        <div class="content">
-            <p>Hello ${supplierName || "Valued Supplier"},</p>
-            
-            <p>We're excited to inform you about a new bidding opportunity:</p>
-            
-            <h3>${bidTitle}</h3>
-            
-            <p><strong>Deadline:</strong> <span class="highlight">${formattedDeadline}</span></p>
-            
-            <p>This is your chance to submit a competitive offer for this procurement opportunity.</p>
-            
-            <center>
-                <a href="[YOUR_DASHBOARD_LINK]" class="button">View Bid Details</a>
-            </center>
-            
-            <p>Please ensure to review all requirements and submit your proposal before the deadline.</p>
-            
-            <p>If you have any questions about this bid, please don't hesitate to contact our support team.</p>
-        </div>
-        
-        <div class="footer">
-            <p>Best regards,<br>
-            <strong>HyɛBɔ Team</strong></p>
-            
-            <p>© ${new Date().getFullYear()} HyɛBɔ. All rights reserved.</p>
-        </div>
-    </body>
-    </html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .header {
+        background-color: #059669;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        border-radius: 5px 5px 0 0;
+      }
+      .content {
+        padding: 20px;
+        background-color: #f9f9f9;
+        border: 1px solid #e1e1e1;
+        border-top: none;
+      }
+      .footer {
+        margin-top: 20px;
+        font-size: 0.9em;
+        color: #777;
+        text-align: center;
+      }
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 20px 0;
+        background-color: #059669;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+      }
+      .button:hover {
+        background-color: #047857;
+      }
+      .highlight {
+        background-color: #fffacd;
+        padding: 2px 5px;
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h2>New Bid Opportunity</h2>
+    </div>
+
+    <div class="content">
+      <p>Hello ${supplierName || "Valued Supplier"},</p>
+
+      <p>We're excited to inform you about a new bidding opportunity:</p>
+
+      <h3>${bidTitle}</h3>
+
+      <p>
+        <strong>Deadline:</strong>
+        <span class="highlight">${formattedDeadline}</span>
+      </p>
+
+      <p>
+        This is your chance to submit a competitive offer for this procurement
+        opportunity.
+      </p>
+
+      <center>
+        <a href="[YOUR_DASHBOARD_LINK]" class="button">View Bid Details</a>
+      </center>
+
+      <p>
+        Please ensure to review all requirements and submit your proposal before
+        the deadline.
+      </p>
+
+      <p>
+        If you have any questions about this bid, please don't hesitate to
+        contact our support team.
+      </p>
+    </div>
+
+    <div class="footer">
+      <p>
+        Best regards,<br />
+        <strong>HyɛBɔ Team</strong>
+      </p>
+
+      <p>© ${new Date().getFullYear()} HyɛBɔ. All rights reserved.</p>
+    </div>
+  </body>
+</html>
     `,
   };
 
