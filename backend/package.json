@@ -8,7 +8,8 @@
     "fresh": "ts-node src/seeders/resetDb.ts",
     "seed": " ts-node src/seeders/seedDb.ts",
     "fresh:seed": "ts-node src/seeders/resetDb.ts && ts-node src/seeders/seedDb.ts",
-    "autoselect": "ts-node src/seeders/seedTestAutoSelect.ts"
+    "autoselect": "ts-node src/seeders/seedTestAutoSelect.ts",
+    "generate:secret": "ts-node src/utils/jwtSecret.ts"
   },
   "keywords": [],
   "author": "fuckboyandy",

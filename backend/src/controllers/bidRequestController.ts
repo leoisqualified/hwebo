@@ -6,7 +6,7 @@ import { BidItem } from "../models/BidItem";
 import { User } from "../models/User";
 import { MoreThan } from "typeorm";
 import { batchSendBidNotifications } from "../utils/mailer";
-import { sendBidNotificationSMS } from "../utils/sms"; // assuming you’ve created this
+import { sendBidNotificationSMS } from "../utils/sms"; 
 
 const bidRequestRepo = AppDataSource.getRepository(BidRequest);
 const userRepo = AppDataSource.getRepository(User);
@@ -51,7 +51,7 @@ export const createBidRequest = async (
 
     await bidRequestRepo.save(bidRequest);
 
-    // 🟡 Add notifications here
+    // Add notifications here
     const suppliers = await userRepo.find({
       where: { role: "supplier", verified: true },
       relations: ["supplierProfile"],
@@ -68,7 +68,7 @@ export const createBidRequest = async (
       bidRequest.deadline
     );
 
-    // 🔔 Optional SMS
+    // Optional SMS
     for (const s of suppliers) {
       if (s.supplierProfile?.phoneNumber) {
         await sendBidNotificationSMS(
@@ -80,7 +80,7 @@ export const createBidRequest = async (
       }
     }
 
-    // ✅ Final response
+    // Final response
     const responsePayload = {
       id: bidRequest.id,
       title: bidRequest.title,
