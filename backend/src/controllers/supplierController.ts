@@ -4,6 +4,7 @@ import { AppDataSource } from "../config/db";
 import { SupplierProfile } from "../models/SupplierProfile";
 import { User } from "../models/User";
 import { verifySupplierAgainstExternalRegistry } from "./adminController";
+import { uploadToCloudinary } from "../utils/uploadToCloudinary";
 
 const profileRepo = AppDataSource.getRepository(SupplierProfile);
 const userRepo = AppDataSource.getRepository(User);
@@ -45,7 +46,22 @@ export const submitSupplierProfile = async (
 
     if (!fdaLicenseFile || !registrationCertFile || !ownerIdFile) {
       res.status(400).json({ message: "Missing required files" });
+      return;
     }
+
+    // Upload files to Cloudinary
+    const fdaLicenseUrl = await uploadToCloudinary(
+      fdaLicenseFile.buffer,
+      "supplierDocs"
+    );
+    const registrationCertificateUrl = await uploadToCloudinary(
+      registrationCertFile.buffer,
+      "supplierDocs"
+    );
+    const ownerIdUrl = await uploadToCloudinary(
+      ownerIdFile.buffer,
+      "supplierDocs"
+    );
 
     const profile = profileRepo.create({
       user,
