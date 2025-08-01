@@ -21,6 +21,7 @@ export default function SupplierKYC() {
   const [momoNumber, setMomoNumber] = useState("");
   const [bankAccount, setBankAccount] = useState("");
   const [kycSubmitted, setKycSubmitted] = useState(false);
+  const hasSubmittedKyc = kycSubmitted || user?.kycStatus === "submitted";
 
   const navigate = useNavigate();
 
@@ -66,9 +67,7 @@ export default function SupplierKYC() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      setSuccessMessage(
-        "KYC documents uploaded successfully. Awaiting verification."
-      );
+      setSuccessMessage("KYC documents have been uploaded successfully.");
       setKycSubmitted(true);
       setFdaLicenseFile(null);
       setRegistrationCertificateFile(null);
@@ -129,9 +128,9 @@ export default function SupplierKYC() {
             </div>
           ) : kycSubmitted ? (
             <div className="text-center py-4">
-              <div className="inline-flex items-center justify-center w-14 h-14 bg-yellow-50 rounded-full mb-3">
+              <div className="inline-flex items-center justify-center w-14 h-14 bg-red-50 rounded-full mb-3">
                 <svg
-                  className="w-6 h-6 text-yellow-600"
+                  className="w-6 h-6 text-red-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -140,21 +139,34 @@ export default function SupplierKYC() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth="1.5"
-                    d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"
+                    d="M12 9v2m0 4h.01M12 3a9 9 0 100 18 9 9 0 000-18z"
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-gray-900">
-                Verification Pending
+              <h3 className="text-lg font-semibold text-gray-900">
+                Business Verification Failed
               </h3>
-              <p className="text-gray-500 text-sm mt-1">
-                Your documents have been submitted and are under review.
+              <p className="text-gray-600 text-sm mt-1 max-w-md mx-auto">
+                Your submitted documents have been received, but we couldn’t
+                verify your business against government records.
+              </p>
+              <p className="text-gray-500 text-sm mt-2 max-w-md mx-auto">
+                Please ensure your registration number, tax ID, and other
+                business details are accurate. You may be contacted to provide
+                additional documentation.
               </p>
             </div>
           ) : (
             <>
               {/* Text Inputs */}
               <div className="space-y-3">
+                {hasSubmittedKyc && (
+                  <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-md mb-4 border border-blue-300">
+                    You have already submitted your KYC documents. We are
+                    currently reviewing them.
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Business Name *
@@ -458,7 +470,7 @@ export default function SupplierKYC() {
                   !contactPerson ||
                   !phoneNumber
                     ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                    : "bg-[#059669] text-white hover:bg-indigo-700"
+                    : "bg-[#059669] text-white hover:bg-[#047857] hover:cursor-pointer"
                 }`}
               >
                 {uploading ? (

@@ -8,6 +8,7 @@ interface User {
   email: string;
   role: "admin" | "school" | "supplier";
   verified: boolean;
+  kycStatus?: "submitted" | "pending" | "approved" | "rejected";
 }
 
 interface AuthContextType {
