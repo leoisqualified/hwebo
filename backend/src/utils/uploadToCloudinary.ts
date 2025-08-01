@@ -5,15 +5,19 @@ import streamifier from "streamifier";
 export const uploadToCloudinary = (
   fileBuffer: Buffer,
   folder: string
-): Promise<string> => {
+): Promise<string | null> => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder },
+      { resource_type: "auto", folder },
       (error, result) => {
-        if (error) reject(error);
-        else resolve(result!.secure_url);
+        if (error) {
+          console.error("Cloudinary upload error:", error);
+          resolve(null); // fail gracefully
+        } else {
+          resolve(result?.secure_url || null);
+        }
       }
     );
-    streamifier.createReadStream(fileBuffer).pipe(stream);
+    stream.end(fileBuffer);
   });
 };

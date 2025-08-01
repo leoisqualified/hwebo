@@ -36,7 +36,10 @@ export const submitSupplierProfile = async (
     const existing = await profileRepo.findOne({
       where: { user: { id: user.id } },
     });
-    if (existing) res.status(400).json({ error: "Profile already submitted" });
+    if (existing) {
+      res.status(400).json({ error: "Profile already submitted" });
+      return;
+    }
 
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
@@ -63,6 +66,17 @@ export const submitSupplierProfile = async (
       "supplierDocs"
     );
 
+    if (!fdaLicenseUrl || !registrationCertificateUrl || !ownerIdUrl) {
+      console.error("Cloudinary upload failed:", {
+        fdaLicenseUrl,
+        registrationCertificateUrl,
+        ownerIdUrl,
+      });
+
+      res.status(500).json({ error: "File upload failed, please try again." });
+      return;
+    }
+
     const profile = profileRepo.create({
       user,
       businessName,
@@ -72,9 +86,9 @@ export const submitSupplierProfile = async (
       phoneNumber,
       momoNumber,
       bankAccount,
-      fdaLicenseUrl: fdaLicenseFile.filename,
-      registrationCertificateUrl: registrationCertFile.filename,
-      ownerIdUrl: ownerIdFile.filename,
+      fdaLicenseUrl,
+      registrationCertificateUrl,
+      ownerIdUrl,
     });
 
     await profileRepo.save(profile);
