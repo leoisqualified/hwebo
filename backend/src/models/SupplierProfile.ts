@@ -9,6 +9,12 @@ import {
 } from "typeorm";
 import { User } from "./User";
 
+export enum VerificationStatus {
+  PENDING = "pending",
+  VERIFIED = "verified",
+  FAILED = "failed",
+}
+
 @Entity()
 export class SupplierProfile {
   @PrimaryGeneratedColumn("uuid")
@@ -47,6 +53,13 @@ export class SupplierProfile {
 
   @Column({ nullable: true })
   bankAccount?: string;
+
+  @Column({
+    type: "enum",
+    enum: VerificationStatus,
+    default: VerificationStatus.PENDING,
+  })
+  verificationStatus!: VerificationStatus;
 
   @CreateDateColumn()
   submittedAt!: Date;

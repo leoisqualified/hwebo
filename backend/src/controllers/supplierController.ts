@@ -5,6 +5,7 @@ import { SupplierProfile } from "../models/SupplierProfile";
 import { User } from "../models/User";
 import { verifySupplierAgainstExternalRegistry } from "./adminController";
 import { uploadToCloudinary } from "../utils/uploadToCloudinary";
+import { VerificationStatus } from "../models/SupplierProfile";
 
 const profileRepo = AppDataSource.getRepository(SupplierProfile);
 const userRepo = AppDataSource.getRepository(User);
@@ -36,7 +37,9 @@ export const submitSupplierProfile = async (
     const existing = await profileRepo.findOne({
       where: { user: { id: user.id } },
     });
-    if (existing) {
+
+    // Prevent submission if already submitted and not failed
+    if (existing && existing.verificationStatus !== "failed") {
       res.status(400).json({ error: "Profile already submitted" });
       return;
     }
@@ -77,23 +80,43 @@ export const submitSupplierProfile = async (
       return;
     }
 
-    const profile = profileRepo.create({
-      user,
-      businessName,
-      registrationNumber,
-      taxId,
-      contactPerson,
-      phoneNumber,
-      momoNumber,
-      bankAccount,
-      fdaLicenseUrl,
-      registrationCertificateUrl,
-      ownerIdUrl,
-    });
+    let profile;
+
+    if (existing && existing.verificationStatus === "failed") {
+      // Update failed profile
+      profile = existing;
+      profile.businessName = businessName;
+      profile.registrationNumber = registrationNumber;
+      profile.taxId = taxId;
+      profile.contactPerson = contactPerson;
+      profile.phoneNumber = phoneNumber;
+      profile.momoNumber = momoNumber;
+      profile.bankAccount = bankAccount;
+      profile.fdaLicenseUrl = fdaLicenseUrl;
+      profile.registrationCertificateUrl = registrationCertificateUrl;
+      profile.ownerIdUrl = ownerIdUrl;
+      profile.verificationStatus = VerificationStatus.PENDING;
+    } else {
+      // Create new profile
+      profile = profileRepo.create({
+        user,
+        businessName,
+        registrationNumber,
+        taxId,
+        contactPerson,
+        phoneNumber,
+        momoNumber,
+        bankAccount,
+        fdaLicenseUrl,
+        registrationCertificateUrl,
+        ownerIdUrl,
+        verificationStatus: VerificationStatus.PENDING,
+      });
+    }
 
     await profileRepo.save(profile);
 
-    // Check external registry for auto-verification
+    // Run external verification
     const isVerified = await verifySupplierAgainstExternalRegistry(
       businessName,
       registrationNumber,
@@ -102,8 +125,13 @@ export const submitSupplierProfile = async (
 
     if (isVerified) {
       user.verified = true;
+      profile.verificationStatus = VerificationStatus.VERIFIED;
       await userRepo.save(user);
+    } else {
+      profile.verificationStatus = VerificationStatus.FAILED;
     }
+
+    await profileRepo.save(profile);
 
     res.status(201).json({ message: "Profile submitted successfully" });
   } catch (error) {
