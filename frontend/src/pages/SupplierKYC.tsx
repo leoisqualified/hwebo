@@ -113,7 +113,7 @@ const SupplierKYC = () => {
         className="bg-white rounded-xl shadow-sm p-6 sm:p-8"
       >
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-[#1E3A8A]">
+          <h2 className="text-2xl font-bold text-[#059669]">
             Business Verification (KYC)
           </h2>
           <p className="text-gray-500 mt-2">
