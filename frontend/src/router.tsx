@@ -7,6 +7,7 @@ import RoleBasedDashboardRedirect from "./components/RoleBasedDashboardRedirect"
 import SupplierDashboard from "./pages/SupplierDashboard";
 import SupplierAvailableBids from "./components/SupplierAvailableBids";
 import MyOffers from "./components/MyOffers";
+import SupplierVerificationFailed from "./pages/supplier/SupplierVerificationFailed";
 
 // School Pages
 import SchoolDashboard from "./pages/SchoolDashboard";
@@ -42,6 +43,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute roles={["supplier"]}>
         <SupplierKYC />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/supplier/kyc/failed",
+    element: (
+      <ProtectedRoute roles={["supplier"]}>
+        <SupplierVerificationFailed />
       </ProtectedRoute>
     ),
   },

@@ -1,21 +1,42 @@
-import { Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-export default function RoleBasedDashboardRedirect() {
+const RoleBasedDashboardRedirect = () => {
   const { user, loading } = useAuth();
+  const navigate = useNavigate();
 
-  if (loading) return <div>Loading...</div>;
+  useEffect(() => {
+    if (loading || !user) return;
 
-  if (!user) return <Navigate to="/" replace />; // redirect to login if not authenticated
+    const { role, verified, supplierProfile } = user;
 
-  switch (user.role) {
-    case "admin":
-      return <Navigate to="/admin-dashboard" replace />;
-    case "supplier":
-      return <Navigate to="/supplier/kyc" replace />;
-    case "school":
-      return <Navigate to="/school-dashboard" replace />;
-    default:
-      return <Navigate to="/" replace />;
-  }
-}
+    if (role === "admin") {
+      navigate("/admin-dashboard");
+    } else if (role === "school") {
+      navigate("/school-dashboard");
+    } else if (role === "supplier") {
+      if (!supplierProfile) {
+        // New supplier — no KYC submission yet
+        navigate("/supplier/kyc");
+      } else if (supplierProfile.verificationStatus === "failed") {
+        // Failed verification — show message
+        navigate("/supplier/kyc/failed");
+      } else if (verified) {
+        // Successfully verified supplier
+        navigate("/supplier/dashboard");
+      } else {
+        // Default to form
+        navigate("/supplier/kyc");
+      }
+    } else {
+      navigate("/"); // fallback
+    }
+  }, [user, loading, navigate]);
+
+  if (loading || !user) return <div>Loading...</div>;
+
+  return null;
+};
+
+export default RoleBasedDashboardRedirect;

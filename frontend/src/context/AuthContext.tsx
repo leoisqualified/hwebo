@@ -3,12 +3,17 @@ import type { ReactNode } from "react";
 
 import api from "../services/api";
 
+interface SupplierProfile {
+  verificationStatus: "pending" | "verified" | "failed";
+  // Add others if needed (like businessName, submittedAt, etc.)
+}
+
 interface User {
   id: string;
   email: string;
   role: "admin" | "school" | "supplier";
   verified: boolean;
-  kycStatus?: "submitted" | "pending" | "approved" | "rejected";
+  supplierProfile?: SupplierProfile | null;
 }
 
 interface AuthContextType {
@@ -31,6 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const res = await api.get("/auth/me");
       setUser(res.data.user);
+      console.log("Fetched user:", res.data.user);
     } catch (error) {
       setUser(null);
     } finally {
