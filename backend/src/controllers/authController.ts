@@ -91,7 +91,10 @@ export const getCurrentUser = async (
   try {
     const userId = (req as any).user.userId;
 
-    const user = await userRepository.findOneBy({ id: userId });
+    const user = await userRepository.findOne({
+      where: { id: userId },
+      relations: ["supplierProfile"], // This loads the related profile
+    });
 
     if (!user) {
       res.status(404).json({ error: "User not found" });
@@ -104,6 +107,11 @@ export const getCurrentUser = async (
         email: user.email,
         role: user.role,
         verified: user.verified,
+        supplierProfile: user.supplierProfile
+          ? {
+              verificationStatus: user.supplierProfile.verificationStatus,
+            }
+          : null,
       },
     });
   } catch (error) {

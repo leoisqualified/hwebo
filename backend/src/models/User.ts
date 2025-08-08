@@ -32,14 +32,14 @@ export class User {
   @Column({ default: false })
   verified!: boolean;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   companyName!: string;
 
   @CreateDateColumn()
   createdAt!: Date;
 
-  @OneToOne(() => SupplierProfile, (profile) => profile.user)
-  supplierProfile!: SupplierProfile;
+  @OneToOne(() => SupplierProfile, (profile) => profile.user, { cascade: true })
+  supplierProfile?: SupplierProfile;
 
   @UpdateDateColumn()
   updatedAt!: Date;

@@ -57,19 +57,23 @@ export const autoSelectLowestOffers = async () => {
     const supplier = lowestOffer.supplier;
     const profile = supplier.supplierProfile;
 
-    // ✅ Send notification
+    // Send notification
     const message = `Your offer for "${item.itemName}" has been selected! Total: ${lowestOffer.totalPrice}`;
 
-    if (profile?.phoneNumber) {
-      await sendSMS(profile.phoneNumber, message);
-    }
+    if (profile) {
+      if (profile.phoneNumber) {
+        await sendSMS(profile.phoneNumber, message);
+      }
 
-    if (supplier.email) {
-      await sendEmail(
-        supplier.email,
-        "Congratulations! Your Offer Was Selected",
-        `Hi ${profile.contactPerson},\n\n${message}\n\nThank you for bidding!`
-      );
+      if (supplier.email) {
+        await sendEmail(
+          supplier.email,
+          "Congratulations! Your Offer Was Selected",
+          `Hi ${profile.contactPerson},\n\n${message}\n\nThank you for bidding!`
+        );
+      }
+    } else {
+      console.warn(`No supplier profile found for supplier ID: ${supplier.id}`);
     }
 
     console.log(`Offer ${lowestOffer.id} selected for ${item.itemName}`);

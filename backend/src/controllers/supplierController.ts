@@ -1,11 +1,10 @@
 // controllers/supplierController.ts
 import { Request, Response, NextFunction } from "express";
 import { AppDataSource } from "../config/db";
-import { SupplierProfile } from "../models/SupplierProfile";
+import { SupplierProfile, VerificationStatus } from "../models/SupplierProfile";
 import { User } from "../models/User";
 import { verifySupplierAgainstExternalRegistry } from "./adminController";
 import { uploadToCloudinary } from "../utils/uploadToCloudinary";
-import { VerificationStatus } from "../models/SupplierProfile";
 
 const profileRepo = AppDataSource.getRepository(SupplierProfile);
 const userRepo = AppDataSource.getRepository(User);
@@ -38,14 +37,13 @@ export const submitSupplierProfile = async (
       where: { user: { id: user.id } },
     });
 
-    // Prevent submission if already submitted and not failed
+    // Prevent resubmission if not failed
     if (existing && existing.verificationStatus !== "failed") {
       res.status(400).json({ error: "Profile already submitted" });
       return;
     }
 
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
-
     const fdaLicenseFile = files["fdaLicense"]?.[0];
     const registrationCertFile = files["registrationCertificate"]?.[0];
     const ownerIdFile = files["ownerId"]?.[0];
@@ -55,7 +53,7 @@ export const submitSupplierProfile = async (
       return;
     }
 
-    // Upload files to Cloudinary
+    // Upload to Cloudinary
     const fdaLicenseUrl = await uploadToCloudinary(
       fdaLicenseFile.buffer,
       "supplierDocs"
@@ -97,7 +95,7 @@ export const submitSupplierProfile = async (
       profile.ownerIdUrl = ownerIdUrl;
       profile.verificationStatus = VerificationStatus.PENDING;
     } else {
-      // Create new profile
+      // New profile
       profile = profileRepo.create({
         user,
         businessName,
@@ -116,7 +114,11 @@ export const submitSupplierProfile = async (
 
     await profileRepo.save(profile);
 
-    // Run external verification
+    // Link profile to user and save
+    user.supplierProfile = profile;
+    await userRepo.save(user);
+
+    // External verification
     const isVerified = await verifySupplierAgainstExternalRegistry(
       businessName,
       registrationNumber,
@@ -133,7 +135,26 @@ export const submitSupplierProfile = async (
 
     await profileRepo.save(profile);
 
-    res.status(201).json({ message: "Profile submitted successfully" });
+    // Fetch user after all updates
+    const finalUser = await userRepo.findOne({
+      where: { id: user.id },
+      relations: ["supplierProfile"],
+    });
+
+    res.status(201).json({
+      message: "Profile submitted successfully",
+      user: {
+        id: finalUser!.id,
+        email: finalUser!.email,
+        role: finalUser!.role,
+        verified: finalUser!.verified,
+        supplierProfile: finalUser!.supplierProfile
+          ? {
+              verificationStatus: finalUser!.supplierProfile.verificationStatus,
+            }
+          : null,
+      },
+    });
   } catch (error) {
     console.error("Error submitting supplier profile:", error);
     res.status(500).json({ error: "Internal server error" });

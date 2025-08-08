@@ -110,7 +110,7 @@ const SupplierKYC = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-xl shadow-sm p-6 sm:p-8"
+        className="bg-white rounded-xl p-6 sm:p-8"
       >
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-[#059669]">
@@ -147,7 +147,7 @@ const SupplierKYC = () => {
         </div>
 
         <div className="mt-6 space-y-6">
-          <h3 className="text-lg font-medium text-[#1E3A8A]">
+          <h3 className="text-lg font-medium text-[#059669]">
             Required Documents
           </h3>
 
