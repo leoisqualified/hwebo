@@ -190,7 +190,7 @@ const SupplierKYC = () => {
                     onClick={() =>
                       setFiles({ ...files, [name as keyof typeof files]: null })
                     }
-                    className="ml-2 text-gray-400 hover:text-gray-600"
+                    className="ml-2 text-gray-400 hover:text-red-600"
                   >
                     <FiX />
                   </button>
